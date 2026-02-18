@@ -235,7 +235,7 @@ export default function Home() {
               <span style={{background:'linear-gradient(135deg,#3b82f6 0%,#8b5cf6 50%,#06b6d4 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Intelligence</span>
             </h1>
             <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.25rem)',color:'rgba(255,255,255,0.55)',lineHeight:1.8,maxWidth:'500px',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.4s'}}>
-              An independent lab advancing the science of safe, interpretable, and beneficial artificial general intelligence.
+              Safe AGI research.
             </p>
             <div style={{display:'flex',gap:'1.25rem',flexWrap:'wrap',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.55s'}}>
               <a href="/#models" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#fff',background:'#3b82f6',padding:'13px 28px',borderRadius:'4px',textDecoration:'none',transition:'background 0.2s',boxShadow:'0 0 40px rgba(59,130,246,0.35)'}}
@@ -290,19 +290,22 @@ export default function Home() {
             <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3.5rem,9vw,9rem)',lineHeight:0.9,color:'#fff',marginBottom:'4rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Three<br/>Frontiers.</h2>
             <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1px',background:'rgba(255,255,255,0.07)'}}>
               {[
-                {name:'ALPHA',sub:'A1 — Safe Deployment',color:'#3b82f6',status:'Operational',desc:'S-2 certified. Enforces constitutional constraints and human-oversight requirements at inference time.',href:'/models/alpha',delay:'0.3s'},
-                {name:'OMEGA',sub:'B1 — Robust Cognition',color:'#8b5cf6',status:'In Evaluation',desc:'R-1 certified. Built for causal reasoning and out-of-distribution generalization under stress.',href:'/models/omega',delay:'0.45s'},
-                {name:'NOVA',sub:'C1 — Agent Integration',color:'#06b6d4',status:'Research Phase',desc:'I-3 certified. Multi-agent coordination with COORD-SAFE for distributed intelligence networks.',href:'/models/nova',delay:'0.6s'},
+                {name:'ALPHA',sub:'A1 — Safe Deployment',color:'#3b82f6',status:'Operational',cert:'S-2',href:'/models/alpha',delay:'0.3s'},
+                {name:'OMEGA',sub:'B1 — Robust Cognition',color:'#8b5cf6',status:'In Evaluation',cert:'R-1',href:'/models/omega',delay:'0.45s'},
+                {name:'NOVA',sub:'C1 — Agent Integration',color:'#06b6d4',status:'Research Phase',cert:'I-3',href:'/models/nova',delay:'0.6s'},
               ].map(m => (
                 <a key={m.name} href={m.href} style={{background:'rgba(0,0,0,0.65)',padding:'3rem 2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.color}`,transition:'background 0.3s',backdropFilter:'blur(10px)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transitionProperty:'opacity,transform,background',transitionDuration:`0.8s,0.8s,0.3s`,transitionDelay:m.delay}}
                   onMouseEnter={e=>e.currentTarget.style.background='rgba(15,20,35,0.85)'}
                   onMouseLeave={e=>e.currentTarget.style.background='rgba(0,0,0,0.65)'}>
-                  <div style={{display:'flex',alignItems:'center',gap:'6px',fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:m.color,marginBottom:'1.25rem'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:'6px',fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:m.color,marginBottom:'2rem'}}>
                     <span style={{width:'6px',height:'6px',borderRadius:'50%',background:m.color,display:'inline-block'}}></span>{m.status}
                   </div>
-                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3.5rem',color:m.color,lineHeight:1,marginBottom:'0.25rem'}}>{m.name}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.28)',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:'1.25rem'}}>{m.sub}</div>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:'0.88rem',fontStyle:'italic',color:'rgba(255,255,255,0.45)',lineHeight:1.75,marginBottom:'1.5rem'}}>{m.desc}</p>
+                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'4.5rem',color:m.color,lineHeight:1,marginBottom:'0.5rem'}}>{m.name}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:'2.5rem'}}>{m.sub}</div>
+                  <div style={{display:'flex',alignItems:'baseline',gap:'0.75rem',marginBottom:'2.5rem'}}>
+                    <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2.2rem',color:m.color,opacity:0.5}}>{m.cert}</span>
+                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.2)'}}>Certified</span>
+                  </div>
                   <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.1em',textTransform:'uppercase',color:m.color}}>View Model Card →</span>
                 </a>
               ))}
@@ -320,7 +323,7 @@ export default function Home() {
             <div>
               <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(139,92,246,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Research Areas</div>
               <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7.5rem)',lineHeight:0.9,color:'#fff',marginBottom:'2rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Six Hard<br/>Problems.</h2>
-              <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'1.05rem',color:'rgba(255,255,255,0.45)',lineHeight:1.8,marginBottom:'2.5rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}}>We focus exclusively on the research that matters most for making AGI safe.</p>
+
               <div style={{display:'flex',gap:'1rem',opacity:vis?1:0,transition:'all 0.8s ease 0.45s'}}>
                 <a href="/research" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#8b5cf6',textDecoration:'none',border:'1px solid rgba(139,92,246,0.35)',padding:'10px 20px',borderRadius:'4px',transition:'all 0.2s'}}
                   onMouseEnter={e=>e.currentTarget.style.borderColor='#8b5cf6'}
@@ -339,9 +342,9 @@ export default function Home() {
                 {n:'05',t:'Evaluation & Red-Teaming',c:'#f59e0b',d:'0.7s'},
                 {n:'06',t:'Constitutional AI Methods',c:'#3b82f6',d:'0.8s'},
               ].map(r => (
-                <div key={r.n} style={{display:'flex',alignItems:'center',gap:'1rem',padding:'1.5rem',background:'rgba(0,0,0,0.5)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform',transitionDuration:'0.7s',transitionDelay:r.d}}>
-                  <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',color:r.c,opacity:0.35,minWidth:'32px'}}>{r.n}</span>
-                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'12px',letterSpacing:'0.05em',color:'rgba(255,255,255,0.75)'}}>{r.t}</span>
+                <div key={r.n} style={{display:'flex',alignItems:'center',gap:'1.5rem',padding:'1.25rem 1.5rem',background:'rgba(0,0,0,0)',borderBottom:'1px solid rgba(255,255,255,0.05)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform',transitionDuration:'0.7s',transitionDelay:r.d}}>
+                  <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.1rem',color:r.c,opacity:0.25,minWidth:'28px'}}>{r.n}</span>
+                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'13px',letterSpacing:'0.06em',color:'rgba(255,255,255,0.65)'}}>{r.t}</span>
                   <span style={{marginLeft:'auto',color:r.c,opacity:0.35,fontSize:'12px',flexShrink:0}}>→</span>
                 </div>
               ))}
@@ -366,9 +369,9 @@ export default function Home() {
                 {n:'04',t:'Open Safety Research',b:'We publish our safety findings — including failures — to contribute to the global field.',c:'#06b6d4',d:'0.75s'},
               ].map(p => (
                 <div key={p.n} style={{background:'rgba(0,0,0,0.55)',padding:'3rem 2rem',backdropFilter:'blur(8px)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transitionProperty:'opacity,transform',transitionDuration:'0.8s',transitionDelay:p.d}}>
-                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2.5rem',color:p.c,opacity:0.12,lineHeight:1,marginBottom:'1.5rem'}}>{p.n}</div>
-                  <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',letterSpacing:'0.04em',color:'#fff',marginBottom:'0.75rem'}}>{p.t}</h3>
-                  <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'0.88rem',color:'rgba(255,255,255,0.4)',lineHeight:1.8}}>{p.b}</p>
+                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'4rem',color:p.c,opacity:0.08,lineHeight:1,marginBottom:'1.5rem'}}>{p.n}</div>
+                  <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.6rem',letterSpacing:'0.04em',color:'#fff',lineHeight:1.1,marginBottom:'1rem'}}>{p.t}</h3>
+                  <div style={{width:'24px',height:'2px',background:p.c,opacity:0.5,borderRadius:'2px'}} />
                 </div>
               ))}
             </div>
@@ -399,7 +402,7 @@ export default function Home() {
                   <div style={{width:'60px',height:'60px',borderRadius:'10px',background:`${m.c}18`,border:`1px solid ${m.c}33`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.5rem',color:m.c,marginBottom:'1.5rem'}}>{m.i}</div>
                   <div style={{fontFamily:"'DM Mono',monospace",fontSize:'12px',color:'rgba(255,255,255,0.88)',letterSpacing:'0.03em',marginBottom:'0.35rem'}}>{m.n}</div>
                   <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:m.c,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:'0.75rem'}}>{m.r}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.05em'}}>{m.t}</div>
+
                 </a>
               ))}
             </div>
@@ -414,14 +417,14 @@ export default function Home() {
           <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'900px',margin:'0 auto',textAlign:'center'}}>
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.7)',marginBottom:'2rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Our Mission</div>
             <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:0.9,color:'#fff',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Intelligence<br/>That Serves<br/>Humanity.</h2>
-            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.3rem)',color:'rgba(255,255,255,0.45)',lineHeight:1.9,marginBottom:'4rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}}>
-              Texas AGI Labs is an independent research institution based in McKinney, Texas. We believe the frontier of intelligence research should not be concentrated in a single city or worldview. We publish openly. We build carefully. We move with urgency — because the stakes demand it.
+            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.2rem)',color:'rgba(255,255,255,0.3)',lineHeight:1.8,marginBottom:'4rem',maxWidth:'480px',margin:'0 auto 4rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}}>
+              Independent. Open. McKinney, Texas.
             </p>
             <div style={{display:'flex',gap:'4rem',justifyContent:'center',flexWrap:'wrap',opacity:vis?1:0,transition:'all 0.8s ease 0.5s'}}>
               {[['3','Frontier Models'],['12+','Research Papers'],['5','Safety Researchers'],['100%','Open Research']].map(([n,l]) => (
                 <div key={l}>
-                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3.5rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',lineHeight:1}}>{n}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.12em',textTransform:'uppercase',marginTop:'4px'}}>{l}</div>
+                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'5rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',lineHeight:1}}>{n}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.2)',letterSpacing:'0.15em',textTransform:'uppercase',marginTop:'8px'}}>{l}</div>
                 </div>
               ))}
             </div>
