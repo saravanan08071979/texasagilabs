@@ -506,39 +506,16 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.05)',padding:'3rem 7vw'}}>
-        <div style={{maxWidth:'1200px',margin:'0 auto',display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:'3rem',marginBottom:'2.5rem'}}>
-          <div>
-            <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none',marginBottom:'1rem'}}>
-              <img src="/texasagilabs-logo.png" alt="" style={{width:'24px',height:'24px'}} />
-              <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'rgba(255,255,255,0.6)'}}>Texas AGI Labs</span>
-            </a>
-            <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.18)',lineHeight:1.9}}>Independent frontier AI research.<br/>Texas.</p>
-          </div>
-          {[
-            ['Research',[['Publications','/research'],['Blog','/blog'],['Safety','/#safety']]],
-            ['Models',[['ALPHA A1','/models/alpha'],['OMEGA B1','/models/omega'],['NOVA C1','/models/nova']]],
-            ['Company',[['Team','/#team'],['Careers','/careers'],['Contact','/#contact']]],
-          ].map(([title,links]) => (
-            <div key={title}>
-              <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.16em',textTransform:'uppercase',color:'rgba(255,255,255,0.2)',marginBottom:'1.25rem'}}>{title}</div>
-              <ul style={{listStyle:'none',padding:0,margin:0,display:'flex',flexDirection:'column',gap:'0.75rem'}}>
-                {links.map(([label,href]) => (
-                  <li key={label}><a href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.32)',textDecoration:'none',transition:'color .2s'}}
-                    onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.75)'}
-                    onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.32)'}>{label}</a></li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',paddingTop:'2rem',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'1rem'}}>
-          <p style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.15)',letterSpacing:'0.06em'}}>© 2025–2026 Texas AGI Labs. All rights reserved.</p>
-          <div style={{display:'flex',gap:'0.6rem'}}>
-            {['Safety-First','Open Research','Texas-Built'].map(b=>(
-              <span key={b} style={{fontFamily:"'DM Mono',monospace",fontSize:'8px',letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 7px',border:'1px solid rgba(255,255,255,0.07)',color:'rgba(255,255,255,0.15)',borderRadius:'2px'}}>{b}</span>
+      <footer style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'1.5rem 5vw'}}>
+        <div style={{maxWidth:'1200px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'1rem'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'2.5rem',flexWrap:'wrap'}}>
+            {[['Research','/research'],['Blog','/blog'],['Models','/models/alpha'],['Careers','/careers'],['Contact','/#contact'],['Privacy Policy','/#']].map(([label,href]) => (
+              <a key={label} href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.35)',textDecoration:'none',transition:'color .2s'}}
+                onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.8)'}
+                onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.35)'}>{label}</a>
             ))}
           </div>
+          <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.08em',textTransform:'uppercase',color:'rgba(255,255,255,0.25)'}}>© 2026 Texas AGI Labs</p>
         </div>
       </footer>
 
