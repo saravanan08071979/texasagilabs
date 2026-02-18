@@ -115,10 +115,11 @@ export default function Home() {
           <span className="logo-text">Texas AGI Labs</span>
         </a>
         <ul className="nav-links">
-          <li><a href="#research">Research</a></li>
-          <li><a href="#models">Models</a></li>
-          <li><a href="#safety">Safety</a></li>
+          <li><a href="/#research">Research</a></li>
+          <li><a href="/#models">Models</a></li>
+          <li><a href="/#safety">Safety</a></li>
           <li><a href="#team">Team</a></li>
+          <li><a href="/blog">Blog</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
@@ -488,7 +489,7 @@ export default function Home() {
             </a>
             <p>An independent frontier AI research lab advancing the science of aligned, interpretable, and beneficial artificial general intelligence.</p>
           </div>
-          <div className="footer-col"><h4>Research</h4><ul><li><a href="/research">Publications</a></li><li><a href="/#research">Alignment</a></li><li><a href="/#research">Interpretability</a></li><li><a href="/#research">Agentic Systems</a></li><li><a href="/#safety">Safety</a></li></ul></div>
+          <div className="footer-col"><h4>Research</h4><ul><li><a href="/research">Publications</a></li><li><a href="/blog">Blog</a></li><li><a href="/#research">Research Areas</a></li><li><a href="/#safety">Safety</a></li></ul></div>
           <div className="footer-col"><h4>Models</h4><ul><li><a href="/models/alpha">ALPHA A1</a></li><li><a href="/models/omega">OMEGA B1</a></li><li><a href="/models/nova">NOVA C1</a></li><li><a href="/#contact">API Access</a></li><li><a href="/#models">Model Cards</a></li></ul></div>
           <div className="footer-col"><h4>Company</h4><ul><li><a href="/#about">About</a></li><li><a href="/careers">Careers</a></li><li><a href="/#contact">Press</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Use</a></li></ul></div>
         </div>
