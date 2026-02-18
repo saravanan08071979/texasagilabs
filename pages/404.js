@@ -85,7 +85,7 @@ export default function NotFound() {
               <div style={{color:'rgba(255,255,255,0.2)'}}># Checking archived paths...</div>
               <div style={{color:'#ef4444'}}>✗ Path not in archive</div>
               <div style={{color:'#f59e0b'}}>⚠ Suggestion: return to known coordinates</div>
-              <div><span style={{color:'rgba(59,130,246,0.7)'}}>$ </span><span style={{borderRight:'1px solid rgba(255,255,255,0.4)',animation:'blink 1s step-end infinite'}}&nbsp;</span></div>
+              <div><span style={{color:'rgba(59,130,246,0.7)'}}>$ </span><span style={{borderRight:'1px solid rgba(255,255,255,0.4)',animation:'blink 1s step-end infinite'}}>{' '}</span></div>
             </div>
           </div>
 
