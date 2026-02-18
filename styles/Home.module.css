@@ -20,18 +20,11 @@
   text-decoration: none;
 }
 
-.logoMark {
-  width: 32px; height: 32px;
-  background: linear-gradient(135deg, var(--accent), var(--accent3));
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  font-weight: 500;
-  color: #fff;
-  letter-spacing: -0.5px;
+.logoImg {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
 }
 
 .logoText {

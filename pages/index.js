@@ -67,7 +67,7 @@ export default function Home() {
       {/* ── NAV ── */}
       <nav className={styles.nav}>
         <a href="/" className={styles.navLogo}>
-          <div className={styles.logoMark}>TX</div>
+          <img src="/texasagilabs-logo.png" alt="Texas AGI Labs Logo" className={styles.logoImg} />
           <span className={styles.logoText}>Texas AGI Labs</span>
         </a>
         <ul className={styles.navLinks}>
@@ -365,7 +365,7 @@ export default function Home() {
         <div className={styles.footerInner}>
           <div className={styles.footerBrand}>
             <a href="/" className={styles.navLogo}>
-              <div className={styles.logoMark}>TX</div>
+              <img src="/texasagilabs-logo.png" alt="Texas AGI Labs Logo" className={styles.logoImg} />
               <span className={styles.logoText}>Texas AGI Labs</span>
             </a>
             <p>
