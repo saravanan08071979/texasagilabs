@@ -174,6 +174,14 @@ function SectionText({ vis, line1, line2, ctaLabel, ctaHref, ghost=false }) {
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false)
+
+  // Prevent browser restoring scroll position or jumping to anchor on load
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+      history.replaceState(null, '', '/')
+    }
+  }, [])
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
