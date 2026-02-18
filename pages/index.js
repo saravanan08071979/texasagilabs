@@ -509,7 +509,7 @@ export default function Home() {
       <footer style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'1.5rem 5vw'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'1rem'}}>
           <div style={{display:'flex',alignItems:'center',gap:'2.5rem',flexWrap:'wrap'}}>
-            {[['Research','/research'],['Blog','/blog'],['Models','/models/alpha'],['Careers','/careers'],['Contact','/#contact'],['Privacy Policy','/#']].map(([label,href]) => (
+            {[['Updates','/blog'],['Privacy Policy','/#']].map(([label,href]) => (
               <a key={label} href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.35)',textDecoration:'none',transition:'color .2s'}}
                 onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.8)'}
                 onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.35)'}>{label}</a>
