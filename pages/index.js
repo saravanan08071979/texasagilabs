@@ -133,7 +133,7 @@ function SectionText({ vis, line1, line2, ctaLabel, ctaHref, ghost=false }) {
     }}>
       <h2 style={{
         fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,
-        fontSize:'clamp(4rem,10.5vw,11rem)',
+        fontSize:'clamp(2.2rem,5vw,5.5rem)',
         lineHeight:.88, letterSpacing:'-.01em',
         color:'#fff', margin:'0 0 3rem',
         opacity:vis?1:0, transform:vis?'none':'translateY(24px)',
