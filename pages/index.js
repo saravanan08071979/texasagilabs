@@ -209,31 +209,130 @@ export default function Home() {
       </Head>
 
       {/* NAV */}
-      <nav style={{
-        position:'fixed',top:0,left:0,right:0,zIndex:1000,
-        padding:'0 4vw',height:'60px',display:'flex',alignItems:'center',justifyContent:'space-between',
-        background:scrolled?'rgba(0,0,0,0.82)':'transparent',
-        backdropFilter:scrolled?'blur(16px)':'none',
-        borderBottom:scrolled?'1px solid rgba(255,255,255,0.05)':'none',
-        transition:'all .5s ease',
-      }}>
-        <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none'}}>
-          <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" style={{width:'26px',height:'26px'}} />
-          <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.18em',textTransform:'uppercase',color:'rgba(255,255,255,0.85)'}}>Texas AGI Labs</span>
-        </a>
-        <div style={{display:'flex',alignItems:'center',gap:'2.25rem'}}>
-          {[['/#models','Models'],['/#safety','Safety'],['/#team','Team'],['/research','Research'],['/blog','Blog'],['/careers','Careers']].map(([href,label]) => (
-            <a key={label} href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)',textDecoration:'none',transition:'color .2s'}}
-              onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.9)'}
-              onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.45)'}>{label}</a>
-          ))}
-          <a href="/#contact" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.6)',textDecoration:'none',border:'1px solid rgba(255,255,255,0.18)',padding:'7px 15px',borderRadius:'3px',transition:'all .2s'}}
-            onMouseEnter={e=>{e.currentTarget.style.color='#fff';e.currentTarget.style.borderColor='rgba(255,255,255,0.45)'}}
-            onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.6)';e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'}}>
-            Request Access
-          </a>
-        </div>
-      </nav>
+      {(() => {
+        const NAV_ITEMS = [
+          { label:'About', items:[
+            { label:'Mission', href:'/#hero', desc:'Who we are' },
+            { label:'Team', href:'/#team', desc:'The researchers' },
+            { label:'Careers', href:'/careers', desc:'Open roles' },
+            { label:'Contact', href:'/#contact', desc:'Get in touch' },
+          ]},
+          { label:'Models', items:[
+            { label:'ALPHA A1', href:'/models/alpha', desc:'Safe deployment · S-2 certified' },
+            { label:'OMEGA B1', href:'/models/omega', desc:'Robust cognition · R-1 certified' },
+            { label:'NOVA C1', href:'/models/nova', desc:'Agent integration · I-3 certified' },
+          ]},
+          { label:'Safety', items:[
+            { label:'Safety Approach', href:'/#safety', desc:'Our principles' },
+            { label:'Publications', href:'/research', desc:'Peer-reviewed papers' },
+            { label:'Certifications', href:'/#safety', desc:'S-2 · R-1 · I-3' },
+          ]},
+          { label:'Research', items:[
+            { label:'All Papers', href:'/research', desc:'12+ publications' },
+            { label:'Blog', href:'/blog', desc:'Deep dives & updates' },
+            { label:'Research Areas', href:'/research', desc:'6 focus areas' },
+          ]},
+          { label:'Team', items:[
+            { label:'Our Researchers', href:'/#team', desc:'Meet the team' },
+            { label:'Open Roles', href:'/careers', desc:'Join the mission' },
+            { label:'Internships', href:'/careers', desc:'PhD research program' },
+          ]},
+        ]
+        return (
+          <nav style={{
+            position:'fixed',top:0,left:0,right:0,zIndex:1000,
+            padding:'0 4vw',height:'60px',display:'flex',alignItems:'center',justifyContent:'space-between',
+            background:scrolled?'rgba(0,0,0,0.88)':'transparent',
+            backdropFilter:scrolled?'blur(20px)':'none',
+            borderBottom:scrolled?'1px solid rgba(255,255,255,0.05)':'none',
+            transition:'all .5s ease',
+          }}>
+            {/* Logo */}
+            <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none',flexShrink:0}}>
+              <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" style={{width:'26px',height:'26px'}} />
+              <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.18em',textTransform:'uppercase',color:'rgba(255,255,255,0.85)'}}>Texas AGI Labs</span>
+            </a>
+
+            {/* Nav items */}
+            <div style={{display:'flex',alignItems:'center',gap:'0.25rem',marginLeft:'3rem',flex:1}}>
+              {NAV_ITEMS.map(nav => (
+                <div key={nav.label}
+                  style={{position:'relative'}}
+                  onMouseEnter={e=>{
+                    const dd = e.currentTarget.querySelector('[data-dropdown]')
+                    if(dd){ dd.style.opacity='1'; dd.style.pointerEvents='all'; dd.style.transform='translateY(0)' }
+                    const lbl = e.currentTarget.querySelector('[data-label]')
+                    if(lbl) lbl.style.color='rgba(255,255,255,0.9)'
+                  }}
+                  onMouseLeave={e=>{
+                    const dd = e.currentTarget.querySelector('[data-dropdown]')
+                    if(dd){ dd.style.opacity='0'; dd.style.pointerEvents='none'; dd.style.transform='translateY(-6px)' }
+                    const lbl = e.currentTarget.querySelector('[data-label]')
+                    if(lbl) lbl.style.color='rgba(255,255,255,0.45)'
+                  }}>
+                  {/* Label */}
+                  <div data-label style={{
+                    fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',
+                    textTransform:'uppercase',color:'rgba(255,255,255,0.45)',
+                    padding:'0 14px',height:'60px',display:'flex',alignItems:'center',gap:'5px',
+                    cursor:'default',transition:'color .2s',userSelect:'none',
+                  }}>
+                    {nav.label}
+                    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{opacity:.4,marginTop:'1px'}}>
+                      <path d="M1 1l3 3 3-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+
+                  {/* Dropdown */}
+                  <div data-dropdown style={{
+                    position:'absolute',top:'54px',left:'50%',transform:'translateX(-50%) translateY(-6px)',
+                    background:'rgba(8,8,12,0.96)',backdropFilter:'blur(24px)',
+                    border:'1px solid rgba(255,255,255,0.08)',borderRadius:'6px',
+                    padding:'0.5rem',minWidth:'220px',
+                    opacity:0,pointerEvents:'none',
+                    transition:'opacity .18s ease, transform .18s ease',
+                    boxShadow:'0 20px 60px rgba(0,0,0,0.6)',
+                  }}>
+                    {/* Arrow */}
+                    <div style={{position:'absolute',top:'-5px',left:'50%',transform:'translateX(-50%)',
+                      width:'10px',height:'5px',overflow:'hidden'}}>
+                      <div style={{width:'8px',height:'8px',background:'rgba(8,8,12,0.96)',
+                        border:'1px solid rgba(255,255,255,0.08)',transform:'rotate(45deg)',
+                        margin:'2px auto 0'}} />
+                    </div>
+                    {nav.items.map((item,i) => (
+                      <a key={item.label} href={item.href} style={{
+                        display:'flex',flexDirection:'column',gap:'2px',
+                        padding:'10px 14px',borderRadius:'4px',textDecoration:'none',
+                        transition:'background .15s',
+                      }}
+                        onMouseEnter={e=>e.currentTarget.style.background='rgba(255,255,255,0.06)'}
+                        onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                        <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.1em',
+                          textTransform:'uppercase',color:'rgba(255,255,255,0.8)'}}>{item.label}</span>
+                        {item.desc && <span style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',
+                          color:'rgba(255,255,255,0.28)',letterSpacing:'0.04em'}}>{item.desc}</span>}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <a href="/#contact" style={{
+              fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',
+              textTransform:'uppercase',color:'rgba(255,255,255,0.6)',textDecoration:'none',
+              border:'1px solid rgba(255,255,255,0.18)',padding:'7px 15px',borderRadius:'3px',
+              transition:'all .2s',flexShrink:0,
+            }}
+              onMouseEnter={e=>{e.currentTarget.style.color='#fff';e.currentTarget.style.borderColor='rgba(255,255,255,0.45)'}}
+              onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.6)';e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'}}>
+              Request Access
+            </a>
+          </nav>
+        )
+      })()}
 
       {/* ── 1. HERO ── */}
       <CinemaSection id="hero">
