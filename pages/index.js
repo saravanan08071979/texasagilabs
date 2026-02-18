@@ -70,7 +70,7 @@ function ParticleRing({ color='#3b82f6' }) {
           const x=cx+Math.cos(angle)*r, y=cy+Math.sin(angle)*r*.3
           const alpha=.08+.15*Math.sin(angle*3+t*2)
           ctx.beginPath(); ctx.arc(x,y,.8+Math.sin(angle*5+t)*.4,0,Math.PI*2)
-          ctx.fillStyle=`rgba(${rv},${gv},${bv},${alpha})`; ctx.fill()
+[O          ctx.fillStyle=`rgba(${rv},${gv},${bv},${alpha})`; ctx.fill()
         }
       }
       const g=ctx.createRadialGradient(cx,cy,0,cx,cy,maxR*.25)
@@ -88,7 +88,7 @@ function ParticleRing({ color='#3b82f6' }) {
 }
 
 const Noise = () => (
-[O  <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:3,opacity:.028,
+  <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:3,opacity:.028,
     backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
     backgroundSize:'180px 180px'}} />
 )
@@ -218,7 +218,7 @@ export default function Home() {
             { label:'Contact', href:'/#contact', desc:'Get in touch' },
           ]},
           { label:'Models', items:[
-            { label:'ALPHA A1', href:'/models/alpha', desc:'Safe deployment · S-2 certified' },
+[I            { label:'ALPHA A1', href:'/models/alpha', desc:'Safe deployment · S-2 certified' },
             { label:'OMEGA B1', href:'/models/omega', desc:'Robust cognition · R-1 certified' },
             { label:'NOVA C1', href:'/models/nova', desc:'Agent integration · I-3 certified' },
           ]},
@@ -339,7 +339,7 @@ export default function Home() {
               display:'flex',flexDirection:'column',gap:'5px',flexShrink:0,
             }}>
               <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
-                transition:'all .25s',transform:menuOpen?'rotate(45deg) translate(4.5px,4.5px)':'none'}} />
+[O                transition:'all .25s',transform:menuOpen?'rotate(45deg) translate(4.5px,4.5px)':'none'}} />
               <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
                 transition:'all .25s',opacity:menuOpen?0:1}} />
               <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
@@ -435,7 +435,7 @@ export default function Home() {
           <SectionText vis={vis} ghost
             line1="Three Frontier"
             line2="Models."
-[I            ctaLabel="View the Suite →"
+            ctaLabel="View the Suite →"
             ctaHref="/models/alpha"
           />
         </>)}
@@ -480,7 +480,7 @@ export default function Home() {
           <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:.88,color:'#fff',marginBottom:'3.5rem'}}>Get In<br/>Touch.</h2>
           <form style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}} onSubmit={handleSubmit}>
             {[['First Name','text','first_name'],['Last Name','text','last_name']].map(([label,type,name]) => (
-[O              <div key={name}>
+              <div key={name}>
                 <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>{label}</label>
                 <input type={type} name={name} required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',boxSizing:'border-box',transition:'border-color .2s'}}
                   onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
@@ -497,7 +497,7 @@ export default function Home() {
               <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>Message</label>
               <textarea name="message" rows={4} required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',resize:'vertical',boxSizing:'border-box',transition:'border-color .2s'}}
                 onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
-                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
+[I                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
             </div>
             <div style={{gridColumn:'1/-1',marginTop:'0.5rem'}}>
               <button type="submit" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.14em',textTransform:'uppercase',background:'#fff',color:'#000',border:'none',padding:'12px 28px',borderRadius:'3px',cursor:'pointer',transition:'opacity .2s'}}
@@ -545,7 +545,7 @@ export default function Home() {
         </div>
       </footer>
 
-[I      <style jsx global>{`
+      <style jsx global>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
