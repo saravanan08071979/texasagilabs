@@ -2,7 +2,7 @@
 .nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 1000; /* above hero, orbit rings, everything */
   padding: 0 2rem;
   display: flex;
   align-items: center;
@@ -11,6 +11,7 @@
   background: rgba(3,5,8,0.85);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
+  pointer-events: all;
 }
 
 .navLogo {
@@ -95,6 +96,7 @@
   padding: 120px 2rem 80px;
   z-index: 1;
   overflow: hidden;
+  isolation: isolate; /* ← keeps orbit rings contained inside hero */
 }
 
 .heroGlow {
@@ -118,6 +120,8 @@
   width: 500px; height: 500px;
   margin: -250px;
   animation: orbit-spin 40s linear infinite;
+  pointer-events: none; /* ← never block clicks */
+  z-index: 0;
 }
 .orbitRing2 { width: 720px; height: 720px; margin: -360px; animation-duration: 60s; border-color: rgba(139,92,246,0.05); }
 .orbitRing3 { width: 980px; height: 980px; margin: -490px; animation-duration: 90s; border-color: rgba(6,182,212,0.04); }
@@ -127,12 +131,23 @@
   width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--accent);
+  /* sit at top-center of the ring */
   top: -3px; left: 50%;
   margin-left: -3px;
   box-shadow: 0 0 10px var(--accent);
+  /* counter-rotate so the dot stays upright while the ring spins */
+  animation: orbit-spin-reverse 40s linear infinite;
 }
-.orbitRing2 .orbitDot { background: var(--accent3); box-shadow: 0 0 10px var(--accent3); }
-.orbitRing3 .orbitDot { background: var(--accent2); box-shadow: 0 0 10px var(--accent2); }
+.orbitRing2 .orbitDot {
+  background: var(--accent3);
+  box-shadow: 0 0 10px var(--accent3);
+  animation-duration: 60s;
+}
+.orbitRing3 .orbitDot {
+  background: var(--accent2);
+  box-shadow: 0 0 10px var(--accent2);
+  animation-duration: 90s;
+}
 
 .heroTag {
   font-family: 'DM Mono', monospace;
