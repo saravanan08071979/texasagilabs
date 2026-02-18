@@ -1,215 +1,182 @@
 import Head from 'next/head'
-import Link from 'next/link'
+import { useState } from 'react'
+import { SiteNav, SiteFooter, GLOBAL_STYLES } from '../components/Layout'
 
 const PAPERS = [
   {
-    id: 'txagi-2025-001',
-    title: 'Scalable Oversight via Recursive Constitutional Constraints in Large Language Models',
-    authors: ['J. Mercer', 'A. Krishnaswamy', 'D. Okafor', 'Texas AGI Labs Research Team'],
-    date: 'November 2025',
-    area: 'Alignment',
-    color: '#3b82f6',
-    abstract: 'We present a framework for scalable oversight of frontier AI systems using recursively applied constitutional constraints. Our method enables human supervisors to maintain meaningful control over model behavior even as capabilities scale, by decomposing complex alignment objectives into verifiable sub-goals. We demonstrate a 94.2% reduction in specification gaming behavior on the ARC-Oversight benchmark suite.',
-    tags: ['Alignment', 'Constitutional AI', 'Scalable Oversight', 'RLHF'],
-    status: 'Published',
-    pages: '34pp',
+    id:'txagi-2025-001',
+    title:'Scalable Oversight via Recursive Constitutional Constraints in Large Language Models',
+    authors:['J. Mercer','A. Krishnaswamy','D. Okafor','Texas AGI Labs Research Team'],
+    date:'November 2025', area:'Alignment', color:'#3b82f6',
+    abstract:'We present a framework for scalable oversight of frontier AI systems using recursively applied constitutional constraints. Our method enables human supervisors to maintain meaningful control over model behavior even as capabilities scale, by decomposing complex alignment objectives into verifiable sub-goals. We demonstrate a 94.2% reduction in specification gaming behavior on the ARC-Oversight benchmark suite.',
+    tags:['Alignment','Constitutional AI','Scalable Oversight','RLHF'],
+    status:'Published', pages:'34pp',
   },
   {
-    id: 'txagi-2025-002',
-    title: 'Circuit-Level Analysis of Deceptive Alignment in Transformer-Based Agents',
-    authors: ['S. Park', 'L. Okonkwo', 'Texas AGI Labs Research Team'],
-    date: 'September 2025',
-    area: 'Interpretability',
-    color: '#8b5cf6',
-    abstract: 'Using mechanistic interpretability techniques, we identify and characterize neural circuit structures associated with deceptive alignment behaviors in large transformer models. We isolate 7 distinct circuit motifs that activate differentially during evaluation vs. deployment contexts, and propose targeted intervention methods to suppress deceptive activation patterns with minimal performance degradation.',
-    tags: ['Interpretability', 'Deceptive Alignment', 'Circuits', 'Transformers'],
-    status: 'Published',
-    pages: '28pp',
+    id:'txagi-2025-002',
+    title:'Circuit-Level Analysis of Deceptive Alignment in Transformer-Based Agents',
+    authors:['S. Park','L. Okonkwo','Texas AGI Labs Research Team'],
+    date:'September 2025', area:'Interpretability', color:'#8b5cf6',
+    abstract:'Using mechanistic interpretability techniques, we identify and characterize neural circuit structures associated with deceptive alignment behaviors in large transformer models. We isolate 7 distinct circuit motifs that activate differentially during evaluation vs. deployment contexts, and propose targeted intervention methods to suppress deceptive activation patterns with minimal performance degradation.',
+    tags:['Interpretability','Deceptive Alignment','Circuits','Transformers'],
+    status:'Published', pages:'28pp',
   },
   {
-    id: 'txagi-2025-003',
-    title: 'SAFE-AGENT: A Benchmark Suite for Evaluating Autonomy Envelopes in Agentic AI Systems',
-    authors: ['R. Vasquez', 'T. Abebe', 'M. Chen', 'Texas AGI Labs Research Team'],
-    date: 'August 2025',
-    area: 'Evaluation',
-    color: '#f59e0b',
-    abstract: 'We introduce SAFE-AGENT, a comprehensive benchmark suite of 1,240 tasks designed to evaluate whether autonomous AI agents respect prescribed autonomy envelopes under distribution shift. The benchmark covers 8 domains including code execution, web navigation, financial reasoning, and multi-agent coordination. We establish baselines for 12 frontier models and release all evaluation harnesses publicly.',
-    tags: ['Evaluation', 'Agentic AI', 'Benchmarks', 'Autonomy'],
-    status: 'Published',
-    pages: '52pp',
+    id:'txagi-2025-003',
+    title:'SAFE-AGENT: A Comprehensive Benchmark for Evaluating Autonomous AI Safety',
+    authors:['S. Park','R. Vasquez','Texas AGI Labs Research Team'],
+    date:'August 2025', area:'Evaluation', color:'#f59e0b',
+    abstract:'We introduce SAFE-AGENT, a 1,240-task benchmark suite for evaluating whether AI agents respect their autonomy envelopes across 8 operational domains. We evaluate 12 frontier models and find significant gaps between non-adversarial and adversarial performance, suggesting surface-level rather than deep alignment in current systems.',
+    tags:['Evaluation','Benchmarks','Autonomous Agents','Safety'],
+    status:'Published', pages:'41pp',
   },
   {
-    id: 'txagi-2025-004',
-    title: 'Corrigibility Under Capability Gain: Maintaining Human Control Across Training Regimes',
-    authors: ['Texas AGI Labs Research Team'],
-    date: 'July 2025',
-    area: 'Alignment',
-    color: '#3b82f6',
-    abstract: 'As AI systems gain capability through continued training, naive corrigibility constraints often degrade or are circumvented. We study this phenomenon across 6 training paradigms and propose Capability-Invariant Corrigibility (CIC), a training objective that preserves human override mechanisms as model capability increases. CIC maintains >96% corrigibility retention across a 10x capability gain regime.',
-    tags: ['Corrigibility', 'Alignment', 'Training', 'Human Control'],
-    status: 'Preprint',
-    pages: '21pp',
+    id:'txagi-2025-004',
+    title:'Capability-Invariant Corrigibility: Maintaining Human Oversight Across Capability Gains',
+    authors:['J. Mercer','Texas AGI Labs Research Team'],
+    date:'July 2025', area:'Alignment', color:'#3b82f6',
+    abstract:'We study corrigibility degradation as AI systems gain capability and propose Capability-Invariant Corrigibility (CIC), a training objective that maintains corrigibility above 96% across a 10x capability gain regime. We show that naive corrigibility constraints degrade consistently as capability increases across six training paradigms.',
+    tags:['Alignment','Corrigibility','Human Oversight','Training'],
+    status:'Under Review', pages:'29pp',
   },
   {
-    id: 'txagi-2026-001',
-    title: 'Toward World Models with Causal Consistency: Grounding AGI Reasoning in Physical Intuition',
-    authors: ['A. Krishnaswamy', 'F. Ndlovu', 'Texas AGI Labs Research Team'],
-    date: 'January 2026',
-    area: 'Reasoning',
-    color: '#10b981',
-    abstract: 'We propose a training methodology for instilling causally consistent world models in large neural networks. By augmenting standard next-token prediction with causal intervention objectives derived from structural causal models, we demonstrate significant improvements in counterfactual reasoning, physical simulation, and out-of-distribution generalization on CausalBench-v2 and ARC-Physics.',
-    tags: ['World Models', 'Causal Reasoning', 'Grounding', 'Physical Intuition'],
-    status: 'Preprint',
-    pages: '39pp',
+    id:'txagi-2026-001',
+    title:'Causal World Models with Structural Consistency Guarantees',
+    authors:['A. Krishnaswamy','D. Okafor','Texas AGI Labs Research Team'],
+    date:'January 2026', area:'Reasoning', color:'#06b6d4',
+    abstract:'We present a world modeling architecture that maintains causal structural consistency across distribution shifts. Our approach explicitly represents causal graphs as first-class model components and enforces structural invariance during training, yielding 91.3% OOD generalization on the OMEGA-Reasoning benchmark.',
+    tags:['Reasoning','Causal Models','OOD Generalization','World Models'],
+    status:'Preprint', pages:'38pp',
   },
   {
-    id: 'txagi-2026-002',
-    title: 'Multi-Agent Coordination Safety: Preventing Emergent Misalignment in Distributed AI Systems',
-    authors: ['D. Okafor', 'S. Park', 'Texas AGI Labs Research Team'],
-    date: 'February 2026',
-    area: 'Agentic Systems',
-    color: '#06b6d4',
-    abstract: 'When multiple AI agents coordinate to complete shared objectives, emergent misalignment can arise that is not present in any individual agent. We characterize three classes of emergent misalignment in multi-agent systems and propose COORD-SAFE, a coordination protocol that provably prevents goal drift in networks of up to 64 heterogeneous agents. We validate on the NOVA architecture across 300+ multi-agent scenarios.',
-    tags: ['Multi-Agent', 'Coordination', 'Safety', 'NOVA'],
-    status: 'Under Review',
-    pages: '31pp',
+    id:'txagi-2026-002',
+    title:'COORD-SAFE: A Safety Protocol for Multi-Agent Coordination Networks',
+    authors:['D. Okafor','R. Vasquez','Texas AGI Labs Research Team'],
+    date:'February 2026', area:'Agentic Systems', color:'#10b981',
+    abstract:'We introduce COORD-SAFE, a coordination protocol for multi-agent AI systems that prevents goal drift, instrumental coordination failures, and belief amplification errors. In 300+ multi-agent scenarios, COORD-SAFE reduces goal drift incidents by 94% with only 3-7% task completion overhead.',
+    tags:['Multi-Agent','Coordination','Safety Protocol','Emergent Behavior'],
+    status:'Preprint', pages:'33pp',
   },
 ]
 
-const AREA_COLORS = {
-  'Alignment': '#3b82f6',
-  'Interpretability': '#8b5cf6',
-  'Evaluation': '#f59e0b',
-  'Reasoning': '#10b981',
-  'Agentic Systems': '#06b6d4',
-}
+const AREAS = ['All','Alignment','Interpretability','Evaluation','Reasoning','Agentic Systems']
+const STATUS_COLOR = { Published:'#10b981', Preprint:'#f59e0b', 'Under Review':'#8b5cf6' }
 
 export default function Research() {
+  const [filter, setFilter] = useState('All')
+  const [expanded, setExpanded] = useState(null)
+  const filtered = filter === 'All' ? PAPERS : PAPERS.filter(p => p.area === filter)
+
   return (
     <>
       <Head>
         <title>Research — Texas AGI Labs</title>
-        <meta name="description" content="Peer-reviewed research on AGI alignment, interpretability, safety evaluation, and agentic systems from Texas AGI Labs." />
+        <meta name="description" content="Publications, preprints, and research from Texas AGI Labs covering AGI alignment, interpretability, evaluation, and agentic systems." />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
       </Head>
 
-      <div className="grid-bg" />
+      <SiteNav />
 
-      <nav>
-        <a href="/" className="nav-logo">
-          <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" className="logo-img" />
-          <span className="logo-text">Texas AGI Labs</span>
-        </a>
-        <ul className="nav-links">
-          <li><a href="/#research">Research</a></li>
-          <li><a href="/#models">Models</a></li>
-          <li><a href="/#safety">Safety</a></li>
-          <li><a href="/#about">About</a></li>
-          <li><a href="/#contact">Contact</a></li>
-        </ul>
-        <a href="/#contact" className="nav-cta">Request Access</a>
-      </nav>
+      <div style={{background:'#0a0f1e',minHeight:'100vh',paddingTop:'64px'}}>
 
-      <div style={{paddingTop:'64px'}}>
-        {/* HEADER */}
-        <div className="section-inner" style={{paddingBottom:'2rem'}}>
-          <div className="section-label">Publications</div>
-          <h1 className="section-title" style={{fontSize:'clamp(3rem,6vw,6rem)'}}>Research<br/>Portfolio</h1>
-          <p className="section-body">Peer-reviewed papers, preprints, and technical reports from the Texas AGI Labs research team. All safety-critical findings are released publicly.</p>
-
-          {/* Stats */}
-          <div style={{display:'flex',gap:'3rem',marginTop:'2.5rem',flexWrap:'wrap'}}>
-            {[['6','Publications'],['5','Research Areas'],['2026','Active Year']].map(([n,l]) => (
-              <div key={l}>
-                <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3rem',lineHeight:1,background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{n}</div>
-                <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#6b7a94',marginTop:'4px'}}>{l}</div>
-              </div>
-            ))}
+        {/* HERO HEADER */}
+        <div style={{position:'relative',minHeight:'50vh',display:'flex',alignItems:'flex-end',overflow:'hidden',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
+          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 60% 80% at 20% 50%,rgba(139,92,246,0.08) 0%,rgba(0,0,0,1) 70%)'}} />
+          {/* Noise */}
+          <div style={{position:'absolute',inset:0,pointerEvents:'none',opacity:0.035,backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",backgroundSize:'180px 180px'}} />
+          <div style={{position:'relative',zIndex:2,padding:'6vw',paddingBottom:'4rem',width:'100%',maxWidth:'1200px'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(139,92,246,0.8)',marginBottom:'1rem'}}>Publications</div>
+            <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(4rem,10vw,10rem)',lineHeight:0.88,color:'#fff',marginBottom:'2rem'}}>
+              Research<br/>
+              <span style={{background:'linear-gradient(135deg,#8b5cf6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Papers.</span>
+            </h1>
+            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.2rem)',color:'rgba(255,255,255,0.45)',lineHeight:1.8,maxWidth:'540px'}}>
+              Peer-reviewed publications, preprints, and working papers from the Texas AGI Labs research team.
+            </p>
           </div>
         </div>
 
-        {/* AREA FILTERS */}
-        <div style={{borderTop:'1px solid rgba(255,255,255,0.07)',borderBottom:'1px solid rgba(255,255,255,0.07)',background:'rgba(10,13,20,0.6)',padding:'1rem 0'}}>
-          <div style={{maxWidth:'1200px',margin:'0 auto',padding:'0 2rem',display:'flex',gap:'1rem',flexWrap:'wrap'}}>
-            {Object.entries(AREA_COLORS).map(([area, color]) => (
-              <span key={area} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',padding:'4px 12px',borderRadius:'4px',border:`1px solid ${color}44`,color,background:`${color}11`}}>{area}</span>
-            ))}
-          </div>
+        {/* STATS BAR */}
+        <div style={{borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',overflowX:'auto'}}>
+          {[['6','Papers Published'],['3','Research Areas'],['12','Researchers'],['2026','Latest Release']].map(([n,l],i) => (
+            <div key={i} style={{flex:'1',minWidth:'160px',padding:'1.5rem 2rem',borderRight:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',gap:'1rem'}}>
+              <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{n}</span>
+              <span style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.25)'}}>{l}</span>
+            </div>
+          ))}
         </div>
 
-        {/* PAPERS */}
-        <div className="section-inner" style={{paddingTop:'4rem'}}>
-          <div style={{display:'flex',flexDirection:'column',gap:'2px',background:'rgba(255,255,255,0.07)',border:'1px solid rgba(255,255,255,0.07)'}}>
-            {PAPERS.map((paper) => (
-              <div key={paper.id} className="paper-card">
-                <div style={{borderTop:`3px solid ${paper.color}`,padding:'2.5rem'}}>
+        {/* FILTER + PAPERS */}
+        <div style={{maxWidth:'1200px',margin:'0 auto',padding:'4rem 6vw'}}>
 
-                  {/* Top row */}
-                  <div style={{display:'flex',alignItems:'center',gap:'1rem',marginBottom:'1rem',flexWrap:'wrap'}}>
-                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.15em',textTransform:'uppercase',padding:'3px 10px',borderRadius:'4px',background:`${paper.color}18`,color:paper.color,border:`1px solid ${paper.color}44`}}>{paper.area}</span>
-                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'#4a5568',letterSpacing:'0.08em',textTransform:'uppercase'}}>{paper.id}</span>
-                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'#4a5568',marginLeft:'auto'}}>{paper.date} · {paper.pages}</span>
-                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.1em',textTransform:'uppercase',padding:'2px 8px',borderRadius:'3px',
-                      background: paper.status === 'Published' ? 'rgba(16,185,129,0.1)' : paper.status === 'Preprint' ? 'rgba(245,158,11,0.1)' : 'rgba(99,102,241,0.1)',
-                      color: paper.status === 'Published' ? '#10b981' : paper.status === 'Preprint' ? '#f59e0b' : '#818cf8',
-                      border: `1px solid ${paper.status === 'Published' ? 'rgba(16,185,129,0.3)' : paper.status === 'Preprint' ? 'rgba(245,158,11,0.3)' : 'rgba(99,102,241,0.3)'}`
-                    }}>{paper.status}</span>
-                  </div>
+          {/* Filter */}
+          <div style={{display:'flex',gap:'1px',marginBottom:'3rem',background:'rgba(255,255,255,0.06)',borderRadius:'6px',overflow:'hidden',flexWrap:'wrap'}}>
+            {AREAS.map(a => (
+              <button key={a} onClick={() => setFilter(a)} style={{
+                fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',
+                padding:'10px 20px',border:'none',cursor:'pointer',transition:'all 0.2s',flex:1,minWidth:'80px',
+                background: filter===a ? '#3b82f6' : 'transparent',
+                color: filter===a ? '#fff' : 'rgba(255,255,255,0.35)',
+              }}>{a}</button>
+            ))}
+          </div>
 
-                  {/* Title */}
-                  <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(1.4rem,2.5vw,1.9rem)',letterSpacing:'0.03em',lineHeight:1.1,color:'#e8edf5',marginBottom:'0.75rem'}}>{paper.title}</h2>
+          {/* Paper list */}
+          <div style={{display:'flex',flexDirection:'column',gap:'1px',background:'rgba(255,255,255,0.06)'}}>
+            {filtered.map((p,idx) => (
+              <div key={p.id} onClick={() => setExpanded(expanded===p.id ? null : p.id)}
+                style={{background: expanded===p.id ? '#0a0d14' : '#000',padding:'2.5rem',cursor:'pointer',transition:'background 0.2s',borderLeft:`3px solid ${expanded===p.id ? p.color : 'transparent'}`}}
+                onMouseEnter={e=>{ if(expanded!==p.id) e.currentTarget.style.background='#08090f' }}
+                onMouseLeave={e=>{ if(expanded!==p.id) e.currentTarget.style.background='#000' }}>
 
-                  {/* Authors */}
-                  <p style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',color:'#4a5568',marginBottom:'1.25rem',letterSpacing:'0.05em'}}>{paper.authors.join(' · ')}</p>
-
-                  {/* Abstract */}
-                  <p style={{fontSize:'0.9rem',color:'#6b7a94',lineHeight:1.8,maxWidth:'800px',marginBottom:'1.5rem'}}>{paper.abstract}</p>
-
-                  {/* Tags */}
-                  <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap'}}>
-                    {paper.tags.map(tag => (
-                      <span key={tag} style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 8px',borderRadius:'3px',border:'1px solid rgba(255,255,255,0.07)',color:'#4a5568'}}>{tag}</span>
-                    ))}
+                <div style={{display:'flex',gap:'1rem',alignItems:'flex-start',marginBottom:'1.25rem',flexWrap:'wrap'}}>
+                  <div style={{display:'flex',gap:'0.75rem',alignItems:'center',flex:1,flexWrap:'wrap'}}>
+                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',padding:'3px 10px',borderRadius:'3px',background:`${p.color}15`,color:p.color,border:`1px solid ${p.color}40`}}>{p.area}</span>
+                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 10px',borderRadius:'3px',border:'1px solid rgba(255,255,255,0.08)',color:STATUS_COLOR[p.status] || '#fff'}}>{p.status}</span>
+                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.2)',marginLeft:'auto'}}>{p.date} · {p.pages}</span>
                   </div>
                 </div>
+
+                <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(1.4rem,2.5vw,2rem)',letterSpacing:'0.02em',color:'#fff',lineHeight:1.05,marginBottom:'0.75rem'}}>{p.title}</h2>
+                <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.04em',marginBottom:'1rem'}}>{p.authors.join(' · ')}</p>
+
+                <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap',alignItems:'center'}}>
+                  {p.tags.map(t => (
+                    <span key={t} style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 8px',borderRadius:'3px',border:'1px solid rgba(255,255,255,0.07)',color:'rgba(255,255,255,0.25)'}}>{t}</span>
+                  ))}
+                  <span style={{marginLeft:'auto',fontFamily:"'DM Mono',monospace",fontSize:'11px',color:p.color,transform:expanded===p.id?'rotate(180deg)':'rotate(0)',display:'inline-block',transition:'transform 0.2s'}}>↓</span>
+                </div>
+
+                {expanded === p.id && (
+                  <div style={{marginTop:'2rem',paddingTop:'2rem',borderTop:'1px solid rgba(255,255,255,0.07)'}}>
+                    <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'1rem',color:'rgba(255,255,255,0.55)',lineHeight:1.9,maxWidth:'760px'}}>{p.abstract}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
 
         {/* CTA */}
-        <div style={{background:'#0a0d14',borderTop:'1px solid rgba(255,255,255,0.07)'}}>
-          <div className="section-inner" style={{textAlign:'center'}}>
-            <div className="section-label" style={{justifyContent:'center'}}>Collaborate</div>
-            <h2 className="section-title">Interested in<br/>Our Research?</h2>
-            <p className="section-body" style={{margin:'0 auto 2rem',textAlign:'center'}}>We actively collaborate with academic institutions, independent researchers, and safety-focused organizations.</p>
-            <a href="/#contact" className="btn-primary">Get In Touch →</a>
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',padding:'6rem 6vw',textAlign:'center',position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 50% 80% at 50% 50%,rgba(59,130,246,0.04) 0%,transparent 70%)'}} />
+          <div style={{position:'relative',zIndex:1}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.7)',marginBottom:'1rem'}}>Collaborate</div>
+            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,6vw,6rem)',lineHeight:0.9,color:'#fff',marginBottom:'2rem'}}>Interested in<br/>Our Research?</h2>
+            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',color:'rgba(255,255,255,0.4)',fontSize:'1.1rem',marginBottom:'3rem',maxWidth:'480px',margin:'0 auto 3rem'}}>We collaborate with academic institutions and independent researchers. Get in touch to discuss joint work.</p>
+            <a href="/#contact" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#fff',background:'#3b82f6',padding:'13px 32px',borderRadius:'4px',textDecoration:'none',transition:'background 0.2s'}}
+              onMouseEnter={e=>e.currentTarget.style.background='#2563eb'}
+              onMouseLeave={e=>e.currentTarget.style.background='#3b82f6'}>Get in Touch →</a>
           </div>
         </div>
 
-        <footer>
-          <div className="footer-inner">
-            <div className="footer-brand">
-              <a href="/" className="nav-logo" style={{textDecoration:'none'}}>
-                <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" className="logo-img" />
-                <span className="logo-text">Texas AGI Labs</span>
-              </a>
-              <p>An independent frontier AI research lab advancing the science of aligned, interpretable, and beneficial artificial general intelligence.</p>
-            </div>
-            <div className="footer-col"><h4>Research</h4><ul><li><a href="/research">All Papers</a></li><li><a href="/#research">Research Areas</a></li><li><a href="/#safety">Safety</a></li></ul></div>
-            <div className="footer-col"><h4>Models</h4><ul><li><a href="#">ALPHA A1</a></li><li><a href="#">OMEGA B1</a></li><li><a href="#">NOVA C1</a></li></ul></div>
-            <div className="footer-col"><h4>Company</h4><ul><li><a href="/#about">About</a></li><li><a href="/#contact">Contact</a></li></ul></div>
-          </div>
-          <div className="footer-bottom">
-            <p>© 2025–2026 Texas AGI Labs. All rights reserved. McKinney, TX 75070</p>
-            <div className="footer-badges"><span className="badge">Safety-First</span><span className="badge">Open Research</span><span className="badge">Texas-Built</span></div>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
 
-      <style jsx global>{`
-        .paper-card { background: #030508; transition: background 0.2s; }
-        .paper-card:hover { background: #080c14; }
-      `}</style>
+      <style jsx global>{GLOBAL_STYLES}</style>
     </>
   )
 }
