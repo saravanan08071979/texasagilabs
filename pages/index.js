@@ -346,6 +346,9 @@ export default function Home() {
                 transition:'all .25s',transform:menuOpen?'rotate(-45deg) translate(4.5px,-4.5px)':'none'}} />
             </button>
           </nav>
+        )
+      })()}
+
       {/* ── MOBILE MENU ── */}
       <div style={{
         position:'fixed',top:'60px',left:0,right:0,bottom:0,zIndex:999,
@@ -404,8 +407,6 @@ export default function Home() {
           textAlign:'center',marginTop:'1rem',
         }}>Request Access →</a>
       </div>
-        )
-      })()}
 
       {/* ── 1. HERO ── */}
       <CinemaSection id="hero">
