@@ -1,174 +1,195 @@
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react'
 
-function NeuralCanvas({ color1 = '#3b82f6', color2 = '#8b5cf6', density = 60 }) {
-  const canvasRef = useRef(null)
+// ── Animated backgrounds ─────────────────────────────────────────────────────
+
+function NeuralCanvas({ color1 = '#3b82f6', color2 = '#8b5cf6', density = 70 }) {
+  const ref = useRef(null)
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = ref.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let animId
-    let w, h, nodes
-
+    let animId, w, h, nodes
+    const hexRgb = h => `${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)}`
     function resize() {
       w = canvas.width = canvas.offsetWidth
       h = canvas.height = canvas.offsetHeight
-      initNodes()
-    }
-
-    function initNodes() {
-      nodes = Array.from({ length: density }, () => ({
-        x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
-        r: Math.random() * 2 + 1,
+      nodes = Array.from({length:density}, () => ({
+        x:Math.random()*w, y:Math.random()*h,
+        vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+        r:Math.random()*2+1,
       }))
     }
-
-    function hexToRgb(hex) {
-      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`
-    }
-
     function draw() {
-      ctx.clearRect(0, 0, w, h)
+      ctx.clearRect(0,0,w,h)
       nodes.forEach(n => {
-        n.x += n.vx; n.y += n.vy
-        if (n.x < 0 || n.x > w) n.vx *= -1
-        if (n.y < 0 || n.y > h) n.vy *= -1
+        n.x+=n.vx; n.y+=n.vy
+        if(n.x<0||n.x>w) n.vx*=-1
+        if(n.y<0||n.y>h) n.vy*=-1
       })
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i+1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x
-          const dy = nodes[i].y - nodes[j].y
-          const dist = Math.sqrt(dx*dx + dy*dy)
-          if (dist < 140) {
-            const alpha = (1 - dist/140) * 0.25
-            const rgb = (i/nodes.length) < 0.5 ? hexToRgb(color1) : hexToRgb(color2)
-            ctx.beginPath()
-            ctx.strokeStyle = `rgba(${rgb},${alpha})`
-            ctx.lineWidth = 0.5
-            ctx.moveTo(nodes[i].x, nodes[i].y)
-            ctx.lineTo(nodes[j].x, nodes[j].y)
-            ctx.stroke()
-          }
+      for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++) {
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y
+        const dist=Math.sqrt(dx*dx+dy*dy)
+        if(dist<150) {
+          const rgb = (i/nodes.length)<.5 ? hexRgb(color1) : hexRgb(color2)
+          ctx.beginPath()
+          ctx.strokeStyle=`rgba(${rgb},${(1-dist/150)*.2})`
+          ctx.lineWidth=.5
+          ctx.moveTo(nodes[i].x,nodes[i].y)
+          ctx.lineTo(nodes[j].x,nodes[j].y)
+          ctx.stroke()
         }
       }
-      nodes.forEach((n, i) => {
-        const rgb = (i/nodes.length) < 0.5 ? hexToRgb(color1) : hexToRgb(color2)
-        ctx.beginPath()
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${rgb},0.5)`
-        ctx.fill()
+      nodes.forEach((n,i) => {
+        const rgb=(i/nodes.length)<.5?hexRgb(color1):hexRgb(color2)
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2)
+        ctx.fillStyle=`rgba(${rgb},0.45)`; ctx.fill()
       })
-      animId = requestAnimationFrame(draw)
+      animId=requestAnimationFrame(draw)
     }
-
-    resize()
-    draw()
-    window.addEventListener('resize', resize)
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
-  }, [color1, color2, density])
-
-  return <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
+    resize(); draw()
+    window.addEventListener('resize',resize)
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize',resize) }
+  },[color1,color2,density])
+  return <canvas ref={ref} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
 }
 
-function ParticleRing({ color = '#3b82f6' }) {
-  const canvasRef = useRef(null)
+function ParticleRing({ color='#3b82f6' }) {
+  const ref = useRef(null)
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = ref.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let animId, t = 0
-    let w, h
-
-    function resize() { w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight }
-
+    let animId, t=0, w, h
+    const rv=parseInt(color.slice(1,3),16), gv=parseInt(color.slice(3,5),16), bv=parseInt(color.slice(5,7),16)
+    function resize() { w=canvas.width=canvas.offsetWidth; h=canvas.height=canvas.offsetHeight }
     function draw() {
-      ctx.clearRect(0, 0, w, h)
-      t += 0.005
-      const cx = w/2, cy = h/2
-      const maxR = Math.min(w, h) * 0.38
-      const rv = parseInt(color.slice(1,3),16)
-      const gv = parseInt(color.slice(3,5),16)
-      const bv = parseInt(color.slice(5,7),16)
-
-      for (let ring = 0; ring < 4; ring++) {
-        const r = maxR * (0.4 + ring * 0.2)
-        const numDots = 40 + ring * 20
-        for (let i = 0; i < numDots; i++) {
-          const angle = (i / numDots) * Math.PI * 2 + t * (ring % 2 === 0 ? 1 : -1) * (0.3 + ring * 0.1)
-          const x = cx + Math.cos(angle) * r
-          const y = cy + Math.sin(angle) * r * 0.35
-          const alpha = 0.15 + 0.2 * Math.sin(angle * 3 + t * 2)
-          const size = 1 + Math.sin(angle * 5 + t) * 0.5
-          ctx.beginPath()
-          ctx.arc(x, y, size, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(${rv},${gv},${bv},${alpha})`
-          ctx.fill()
+      ctx.clearRect(0,0,w,h); t+=.004
+      const cx=w/2, cy=h/2, maxR=Math.min(w,h)*.42
+      for(let ring=0;ring<5;ring++) {
+        const r=maxR*(.35+ring*.16), num=50+ring*18
+        for(let i=0;i<num;i++) {
+          const angle=(i/num)*Math.PI*2+t*(ring%2===0?1:-1)*(.25+ring*.08)
+          const x=cx+Math.cos(angle)*r, y=cy+Math.sin(angle)*r*.32
+          const alpha=.12+.18*Math.sin(angle*3+t*2)
+          const size=1+Math.sin(angle*5+t)*.5
+          ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2)
+          ctx.fillStyle=`rgba(${rv},${gv},${bv},${alpha})`; ctx.fill()
         }
       }
-
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR * 0.3)
-      grad.addColorStop(0, `rgba(${rv},${gv},${bv},0.08)`)
-      grad.addColorStop(1, `rgba(${rv},${gv},${bv},0)`)
-      ctx.beginPath()
-      ctx.arc(cx, cy, maxR * 0.3, 0, Math.PI * 2)
-      ctx.fillStyle = grad
-      ctx.fill()
-
-      animId = requestAnimationFrame(draw)
+      const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,maxR*.28)
+      grad.addColorStop(0,`rgba(${rv},${gv},${bv},0.07)`)
+      grad.addColorStop(1,`rgba(${rv},${gv},${bv},0)`)
+      ctx.beginPath(); ctx.arc(cx,cy,maxR*.28,0,Math.PI*2)
+      ctx.fillStyle=grad; ctx.fill()
+      animId=requestAnimationFrame(draw)
     }
-
-    resize()
-    draw()
-    window.addEventListener('resize', resize)
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
-  }, [color])
-
-  return <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
+    resize(); draw()
+    window.addEventListener('resize',resize)
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize',resize) }
+  },[color])
+  return <canvas ref={ref} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
 }
 
-function Section({ id, bg, children, style = {} }) {
+// ── Noise overlay ─────────────────────────────────────────────────────────────
+const Noise = () => (
+  <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:3,opacity:.032,
+    backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+    backgroundSize:'180px 180px'}} />
+)
+
+// ── Single cinematic section ──────────────────────────────────────────────────
+function CinemaSection({ id, children, style={} }) {
   const ref = useRef(null)
   const [vis, setVis] = useState(false)
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true) }, { threshold: 0.15 })
-    if (ref.current) obs.observe(ref.current)
+    const obs = new IntersectionObserver(([e]) => { if(e.isIntersecting) setVis(true) }, {threshold:.2})
+    if(ref.current) obs.observe(ref.current)
     return () => obs.disconnect()
-  }, [])
+  },[])
   return (
     <section ref={ref} id={id} style={{
-      position:'relative', minHeight:'100vh', display:'flex',
-      alignItems:'center', overflow:'hidden', background: bg || '#000', ...style,
+      position:'relative', height:'100vh', minHeight:'600px',
+      display:'flex', flexDirection:'column', justifyContent:'flex-end',
+      overflow:'hidden', background:'#000', ...style,
     }}>
       {children(vis)}
-      <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:10,opacity:0.035,backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",backgroundSize:'180px 180px'}} />
+      <Noise />
     </section>
   )
 }
 
+// ── Text + CTA overlay (bottom-left, SpaceX style) ────────────────────────────
+function SectionText({ vis, eyebrow, line1, line2, ctaLabel, ctaHref, ctaColor='#fff', delay=0 }) {
+  const base = `0.8s ease ${delay}s`
+  return (
+    <div style={{
+      position:'relative', zIndex:4,
+      padding:'0 6vw 8vh',
+      maxWidth:'900px',
+    }}>
+      {eyebrow && (
+        <div style={{
+          fontFamily:"'DM Mono',monospace", fontSize:'10px', letterSpacing:'0.2em',
+          textTransform:'uppercase', color:'rgba(255,255,255,0.4)',
+          marginBottom:'1.25rem',
+          opacity:vis?1:0, transform:vis?'translateY(0)':'translateY(16px)',
+          transition:`opacity ${base}, transform ${base}`,
+        }}>{eyebrow}</div>
+      )}
+      <h2 style={{
+        fontFamily:"'Bebas Neue',sans-serif",
+        fontSize:'clamp(3.5rem,9vw,9.5rem)',
+        lineHeight:.88, letterSpacing:'.02em', color:'#fff',
+        margin:'0 0 2.5rem',
+        opacity:vis?1:0, transform:vis?'translateY(0)':'translateY(30px)',
+        transition:`opacity 1s ease ${delay+.1}s, transform 1s ease ${delay+.1}s`,
+      }}>
+        {line1}<br/>
+        <span style={{color:'rgba(255,255,255,0.45)'}}>{line2}</span>
+      </h2>
+      <a href={ctaHref} style={{
+        display:'inline-block',
+        fontFamily:"'DM Mono',monospace", fontSize:'11px',
+        letterSpacing:'0.12em', textTransform:'uppercase',
+        color:'#000', background:'#fff',
+        padding:'13px 28px', borderRadius:'4px',
+        textDecoration:'none', transition:'opacity .2s',
+        opacity:vis?1:0,
+        transitionProperty:'opacity',
+        transitionDuration:'.2s, .8s',
+        transitionDelay:`0s, ${delay+.25}s`,
+        animation: vis ? `fadeIn .8s ease ${delay+.25}s both` : 'none',
+      }}
+        onMouseEnter={e=>e.currentTarget.style.opacity='.8'}
+        onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
+        {ctaLabel}
+      </a>
+    </div>
+  )
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 export default function Home() {
   const [scrolled, setScrolled] = useState(false)
-
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    const fn = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', fn)
+    return () => window.removeEventListener('scroll', fn)
+  },[])
 
   async function handleSubmit(e) {
     e.preventDefault()
     const btn = e.target.querySelector('button[type=submit]')
-    btn.textContent = 'Sending...'
-    btn.disabled = true
+    btn.textContent = 'Sending...'; btn.disabled = true
     try {
       const res = await fetch('https://formspree.io/f/REPLACE_WITH_YOUR_ID', {
-        method: 'POST', body: new FormData(e.target),
-        headers: { Accept: 'application/json' },
+        method:'POST', body:new FormData(e.target), headers:{Accept:'application/json'},
       })
-      if (res.ok) { btn.textContent = '✓ Sent!'; btn.style.background='#10b981'; e.target.reset() }
+      if(res.ok) { btn.textContent='✓ Sent!'; btn.style.background='#10b981'; e.target.reset() }
       else throw new Error()
-    } catch { btn.textContent = '✗ Try Again'; btn.style.background='#ef4444' }
-    finally { btn.disabled = false; setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background='' }, 3000) }
+    } catch { btn.textContent='✗ Try Again'; btn.style.background='#ef4444' }
+    finally { btn.disabled=false; setTimeout(()=>{ btn.textContent='Send Message →'; btn.style.background='' },3000) }
   }
 
   return (
@@ -183,7 +204,7 @@ export default function Home() {
         <link rel="apple-touch-icon" href="/favicon-180.png" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Texas AGI Labs — Frontier Intelligence Research" />
-        <meta property="og:description" content="Pioneering aligned AGI systems for humanity's long-term benefit. Based in McKinney, Texas." />
+        <meta property="og:description" content="Pioneering aligned AGI systems for humanity's long-term benefit." />
         <meta property="og:url" content="https://www.texasagilabs.com" />
         <meta property="og:image" content="https://www.texasagilabs.com/og-image.png" />
         <meta property="og:image:width" content="1200" />
@@ -195,24 +216,24 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
       </Head>
 
-      {/* NAV */}
+      {/* ── NAV ── */}
       <nav style={{
         position:'fixed',top:0,left:0,right:0,zIndex:1000,
         padding:'0 4vw',height:'64px',display:'flex',alignItems:'center',justifyContent:'space-between',
-        background: scrolled ? 'rgba(0,0,0,0.88)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
+        background:scrolled?'rgba(0,0,0,0.88)':'transparent',
+        backdropFilter:scrolled?'blur(12px)':'none',
+        borderBottom:scrolled?'1px solid rgba(255,255,255,0.06)':'none',
         transition:'all 0.4s ease',
       }}>
         <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none'}}>
           <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" style={{width:'28px',height:'28px'}} />
-          <span style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.15em',textTransform:'uppercase',color:'#fff',fontWeight:500}}>Texas AGI Labs</span>
+          <span style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.15em',textTransform:'uppercase',color:'#fff'}}>Texas AGI Labs</span>
         </a>
-        <div style={{display:'flex',alignItems:'center',gap:'2.5rem'}}>
-          {[['/#research','Research'],['/#models','Models'],['/#safety','Safety'],['/#team','Team'],['/blog','Blog'],['/careers','Careers']].map(([href,label]) => (
-            <a key={label} href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.6)',textDecoration:'none',transition:'color 0.2s'}}
+        <div style={{display:'flex',alignItems:'center',gap:'2rem'}}>
+          {[['/#models','Models'],['/#safety','Safety'],['/#team','Team'],['/research','Research'],['/blog','Blog'],['/careers','Careers']].map(([href,label]) => (
+            <a key={label} href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.55)',textDecoration:'none',transition:'color 0.2s'}}
               onMouseEnter={e=>e.currentTarget.style.color='#fff'}
-              onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.6)'}>{label}</a>
+              onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.55)'}>{label}</a>
           ))}
           <a href="/#contact" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#fff',textDecoration:'none',border:'1px solid rgba(255,255,255,0.25)',padding:'7px 16px',borderRadius:'4px',transition:'all 0.2s'}}
             onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,0.08)';e.currentTarget.style.borderColor='rgba(255,255,255,0.5)'}}
@@ -222,57 +243,41 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO */}
-      <Section id="hero" bg="#000">
+      {/* ══ SECTION 1 — HERO ══ */}
+      <CinemaSection id="hero">
         {vis => (<>
           <NeuralCanvas color1="#3b82f6" color2="#8b5cf6" density={80} />
-          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 50% 40%,rgba(10,15,30,0) 0%,rgba(0,0,0,0.65) 100%)'}} />
-          <div style={{position:'absolute',bottom:0,left:0,right:0,height:'25%',background:'linear-gradient(to top,#000,transparent)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',paddingBottom:'14vh',maxWidth:'960px',alignSelf:'flex-end',marginBottom:'6vh'}}>
-            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.9)',marginBottom:'1.5rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.1s'}}>★ Frontier AI Research — McKinney, Texas</div>
-            <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(4.5rem,13vw,13rem)',lineHeight:0.88,letterSpacing:'0.02em',color:'#fff',margin:'0 0 2rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(40px)',transition:'all 1s ease 0.2s'}}>
-              Researching<br/>Aligned<br/>
-              <span style={{background:'linear-gradient(135deg,#3b82f6 0%,#8b5cf6 50%,#06b6d4 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Intelligence</span>
-            </h1>
-            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.25rem)',color:'rgba(255,255,255,0.55)',lineHeight:1.8,maxWidth:'500px',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.4s'}}>
-              Safe AGI research.
-            </p>
-            <div style={{display:'flex',gap:'1.25rem',flexWrap:'wrap',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.55s'}}>
-              <a href="/#models" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#fff',background:'#3b82f6',padding:'13px 28px',borderRadius:'4px',textDecoration:'none',transition:'background 0.2s',boxShadow:'0 0 40px rgba(59,130,246,0.35)'}}
-                onMouseEnter={e=>e.currentTarget.style.background='#2563eb'}
-                onMouseLeave={e=>e.currentTarget.style.background='#3b82f6'}>Explore Models</a>
-              <a href="/research" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.75)',padding:'13px 28px',borderRadius:'4px',textDecoration:'none',border:'1px solid rgba(255,255,255,0.18)',transition:'border-color 0.2s'}}
-                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.5)'}
-                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'}>View Research →</a>
-            </div>
-          </div>
-          <div style={{position:'absolute',bottom:'2.5rem',left:'50%',transform:'translateX(-50%)',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px',opacity:0.35}}>
-            <span style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.2em',textTransform:'uppercase',color:'#fff'}}>Scroll</span>
-            <div style={{width:'1px',height:'36px',background:'linear-gradient(to bottom,rgba(255,255,255,0.6),transparent)',animation:'scrollPulse 2s ease infinite'}} />
+          <div style={{position:'absolute',inset:0,zIndex:2,background:'linear-gradient(to top,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.1) 50%,rgba(0,0,0,0.35) 100%)'}} />
+          <SectionText
+            vis={vis}
+            eyebrow="★ Frontier AI Research"
+            line1="Researching Aligned"
+            line2="Intelligence."
+            ctaLabel="Explore Models →"
+            ctaHref="/#models"
+          />
+          {/* Scroll cue */}
+          <div style={{position:'absolute',bottom:'2rem',left:'50%',transform:'translateX(-50%)',zIndex:4,display:'flex',flexDirection:'column',alignItems:'center',gap:'6px',opacity:.3}}>
+            <div style={{width:'1px',height:'40px',background:'linear-gradient(to bottom,rgba(255,255,255,0.8),transparent)',animation:'scrollPulse 2s ease infinite'}} />
           </div>
         </>)}
-      </Section>
+      </CinemaSection>
 
-
-      {/* TICKER */}
+      {/* ── TICKER ── */}
       <div style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.06)',borderBottom:'1px solid rgba(255,255,255,0.06)',overflow:'hidden',whiteSpace:'nowrap',position:'relative',zIndex:5}}>
-        <div style={{display:'inline-flex',animation:'ticker 30s linear infinite',padding:'0'}}>
+        <div style={{display:'inline-flex',animation:'ticker 28s linear infinite'}}>
           {[...Array(3)].map((_,idx) => (
             <div key={idx} style={{display:'inline-flex',alignItems:'center'}}>
               {[
-                {n:'3',l:'Frontier Models'},
-                {n:'12+',l:'Research Papers'},
-                {n:'5',l:'Safety Researchers'},
-                {n:'100%',l:'Open Research'},
-                {n:'S-2',l:'ALPHA Certified'},
-                {n:'R-1',l:'OMEGA Certified'},
-                {n:'1,240',l:'Benchmark Tasks'},
-                {n:'2026',l:'Founded McKinney TX'},
+                {n:'3',l:'Frontier Models'},{n:'12+',l:'Research Papers'},
+                {n:'S-2',l:'ALPHA Certified'},{n:'R-1',l:'OMEGA Certified'},
+                {n:'1,240',l:'Benchmark Tasks'},{n:'100%',l:'Open Research'},
+                {n:'I-3',l:'NOVA Certified'},{n:'5',l:'Safety Researchers'},
               ].map((item,i) => (
-                <div key={i} style={{display:'inline-flex',alignItems:'center',gap:'0.75rem',padding:'0.9rem 3rem'}}>
-                  <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{item.n}</span>
-                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.25)'}}>{item.l}</span>
-                  <span style={{color:'rgba(255,255,255,0.08)',marginLeft:'0.5rem',fontSize:'10px'}}>◆</span>
+                <div key={i} style={{display:'inline-flex',alignItems:'center',gap:'0.75rem',padding:'0.85rem 2.5rem'}}>
+                  <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.3rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{item.n}</span>
+                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)'}}>{item.l}</span>
+                  <span style={{color:'rgba(255,255,255,0.07)',fontSize:'8px'}}>◆</span>
                 </div>
               ))}
             </div>
@@ -280,198 +285,144 @@ export default function Home() {
         </div>
       </div>
 
-      {/* MODELS */}
-      <Section id="models" bg="#000">
+      {/* ══ SECTION 2 — MODELS ══ */}
+      <CinemaSection id="models">
         {vis => (<>
           <ParticleRing color="#3b82f6" />
-          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 100% 80% at 0% 50%,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.88) 55%)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto'}}>
-            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.75)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Model Suite</div>
-            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3.5rem,9vw,9rem)',lineHeight:0.9,color:'#fff',marginBottom:'4rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Three<br/>Frontiers.</h2>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1px',background:'rgba(255,255,255,0.07)'}}>
-              {[
-                {name:'ALPHA',sub:'A1 — Safe Deployment',color:'#3b82f6',status:'Operational',cert:'S-2',href:'/models/alpha',delay:'0.3s'},
-                {name:'OMEGA',sub:'B1 — Robust Cognition',color:'#8b5cf6',status:'In Evaluation',cert:'R-1',href:'/models/omega',delay:'0.45s'},
-                {name:'NOVA',sub:'C1 — Agent Integration',color:'#06b6d4',status:'Research Phase',cert:'I-3',href:'/models/nova',delay:'0.6s'},
-              ].map(m => (
-                <a key={m.name} href={m.href} style={{background:'rgba(0,0,0,0.65)',padding:'3rem 2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.color}`,transition:'background 0.3s',backdropFilter:'blur(10px)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transitionProperty:'opacity,transform,background',transitionDuration:`0.8s,0.8s,0.3s`,transitionDelay:m.delay}}
-                  onMouseEnter={e=>e.currentTarget.style.background='rgba(15,20,35,0.85)'}
-                  onMouseLeave={e=>e.currentTarget.style.background='rgba(0,0,0,0.65)'}>
-                  <div style={{display:'flex',alignItems:'center',gap:'6px',fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:m.color,marginBottom:'2rem'}}>
-                    <span style={{width:'6px',height:'6px',borderRadius:'50%',background:m.color,display:'inline-block'}}></span>{m.status}
-                  </div>
-                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'4.5rem',color:m.color,lineHeight:1,marginBottom:'0.5rem'}}>{m.name}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:'2.5rem'}}>{m.sub}</div>
-                  <div style={{display:'flex',alignItems:'baseline',gap:'0.75rem',marginBottom:'2.5rem'}}>
-                    <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2.2rem',color:m.color,opacity:0.5}}>{m.cert}</span>
-                    <span style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.2)'}}>Certified</span>
-                  </div>
-                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.1em',textTransform:'uppercase',color:m.color}}>View Model Card →</span>
-                </a>
-              ))}
-            </div>
+          <div style={{position:'absolute',inset:0,zIndex:2,background:'linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.05) 55%,rgba(0,0,0,0.5) 100%)'}} />
+          {/* Model names — large, top-right */}
+          <div style={{
+            position:'absolute',top:'50%',right:'6vw',transform:'translateY(-50%)',
+            zIndex:3,display:'flex',flexDirection:'column',gap:'0',
+            opacity:vis?1:0,transition:'opacity 1s ease 0.4s',
+          }}>
+            {[['ALPHA','#3b82f6','/models/alpha'],['OMEGA','#8b5cf6','/models/omega'],['NOVA','#06b6d4','/models/nova']].map(([name,color,href]) => (
+              <a key={name} href={href} style={{
+                fontFamily:"'Bebas Neue',sans-serif",
+                fontSize:'clamp(3rem,7vw,7rem)',
+                lineHeight:.9, letterSpacing:'.04em',
+                color:'rgba(255,255,255,0.06)',
+                textDecoration:'none',
+                transition:'color .3s',
+                display:'block',
+              }}
+                onMouseEnter={e=>e.currentTarget.style.color=color}
+                onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.06)'}>
+                {name}
+              </a>
+            ))}
           </div>
+          <SectionText
+            vis={vis}
+            eyebrow="Model Suite"
+            line1="Three Frontier"
+            line2="Models."
+            ctaLabel="View the Suite →"
+            ctaHref="/models/alpha"
+          />
         </>)}
-      </Section>
+      </CinemaSection>
 
-      {/* RESEARCH */}
-      <Section id="research" bg="#000">
+      {/* ══ SECTION 3 — SAFETY ══ */}
+      <CinemaSection id="safety">
         {vis => (<>
-          <NeuralCanvas color1="#8b5cf6" color2="#06b6d4" density={50} />
-          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 80% at 100% 50%,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.9) 55%)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto',display:'grid',gridTemplateColumns:'1fr',gap:'4rem'}}>
-            <div>
-              <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(139,92,246,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Research Areas</div>
-              <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7.5rem)',lineHeight:0.9,color:'#fff',marginBottom:'2rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Six Hard<br/>Problems.</h2>
-
-              <div style={{display:'flex',gap:'1rem',opacity:vis?1:0,transition:'all 0.8s ease 0.45s'}}>
-                <a href="/research" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#8b5cf6',textDecoration:'none',border:'1px solid rgba(139,92,246,0.35)',padding:'10px 20px',borderRadius:'4px',transition:'all 0.2s'}}
-                  onMouseEnter={e=>e.currentTarget.style.borderColor='#8b5cf6'}
-                  onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(139,92,246,0.35)'}>All Publications →</a>
-                <a href="/blog" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.4)',textDecoration:'none',border:'1px solid rgba(255,255,255,0.1)',padding:'10px 20px',borderRadius:'4px',transition:'all 0.2s'}}
-                  onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.3)'}
-                  onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'}>Blog →</a>
+          <NeuralCanvas color1="#10b981" color2="#3b82f6" density={55} />
+          <div style={{position:'absolute',inset:0,zIndex:2,background:'linear-gradient(to top,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.05) 50%,rgba(0,0,0,0.5) 100%)'}} />
+          {/* Safety numbers — right side */}
+          <div style={{
+            position:'absolute',top:'50%',right:'6vw',transform:'translateY(-50%)',
+            zIndex:3,display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',
+            background:'rgba(255,255,255,0.05)',
+            opacity:vis?1:0,transition:'opacity 1s ease 0.5s',
+          }}>
+            {[['98.7%','Constitutional\nCompliance'],['97.3%','Corrigibility\nRetention'],['99.1%','Deceptive Align\nProbe'],['94.2%','OOD Safety\nGeneralization']].map(([n,l]) => (
+              <div key={n} style={{padding:'2rem 2.5rem',background:'rgba(0,0,0,0.6)',backdropFilter:'blur(10px)',minWidth:'180px'}}>
+                <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2.5rem',color:'#10b981',lineHeight:1,marginBottom:'0.5rem'}}>{n}</div>
+                <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.25)',whiteSpace:'pre-line',lineHeight:1.5}}>{l}</div>
               </div>
-            </div>
-            <div>
-              {[
-                {n:'01',t:'AGI Alignment',c:'#3b82f6',d:'0.3s'},
-                {n:'02',t:'Mechanistic Interpretability',c:'#8b5cf6',d:'0.4s'},
-                {n:'03',t:'Scalable Oversight',c:'#06b6d4',d:'0.5s'},
-                {n:'04',t:'Agentic AI Safety',c:'#10b981',d:'0.6s'},
-                {n:'05',t:'Evaluation & Red-Teaming',c:'#f59e0b',d:'0.7s'},
-                {n:'06',t:'Constitutional AI Methods',c:'#3b82f6',d:'0.8s'},
-              ].map(r => (
-                <div key={r.n} style={{display:'flex',alignItems:'center',gap:'1.5rem',padding:'1.25rem 1.5rem',background:'rgba(0,0,0,0)',borderBottom:'1px solid rgba(255,255,255,0.05)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform',transitionDuration:'0.7s',transitionDelay:r.d}}>
-                  <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.1rem',color:r.c,opacity:0.25,minWidth:'28px'}}>{r.n}</span>
-                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'13px',letterSpacing:'0.06em',color:'rgba(255,255,255,0.65)'}}>{r.t}</span>
-                  <span style={{marginLeft:'auto',color:r.c,opacity:0.35,fontSize:'12px',flexShrink:0}}>→</span>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
+          <SectionText
+            vis={vis}
+            eyebrow="Safety First"
+            line1="Not an"
+            line2="Afterthought."
+            ctaLabel="Our Approach →"
+            ctaHref="/research"
+          />
         </>)}
-      </Section>
+      </CinemaSection>
 
-      {/* SAFETY */}
-      <Section id="safety" bg="#000">
+      {/* ══ SECTION 4 — TEAM / MISSION ══ */}
+      <CinemaSection id="team">
         {vis => (<>
-          <ParticleRing color="#10b981" />
-          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 100% 80% at 100% 50%,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.9) 55%)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto'}}>
-            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(16,185,129,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Safety First</div>
-            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3.5rem,9vw,9rem)',lineHeight:0.9,color:'#fff',marginBottom:'4rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Safety Is Not<br/>An Afterthought.</h2>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1px',background:'rgba(255,255,255,0.05)'}}>
-              {[
-                {n:'01',t:'Constitutional Constraints',b:'Every model enforces hard-coded ethical constraints at inference — non-negotiable, non-bypassable.',c:'#3b82f6',d:'0.3s'},
-                {n:'02',t:'Corrigibility by Design',b:'Human override mechanisms are preserved at every capability tier. We do not trade control for performance.',c:'#10b981',d:'0.45s'},
-                {n:'03',t:'Mechanistic Audits',b:'We reverse-engineer the circuits responsible for key behaviors. No model ships without a full circuit audit.',c:'#8b5cf6',d:'0.6s'},
-                {n:'04',t:'Open Safety Research',b:'We publish our safety findings — including failures — to contribute to the global field.',c:'#06b6d4',d:'0.75s'},
-              ].map(p => (
-                <div key={p.n} style={{background:'rgba(0,0,0,0.55)',padding:'3rem 2rem',backdropFilter:'blur(8px)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transitionProperty:'opacity,transform',transitionDuration:'0.8s',transitionDelay:p.d}}>
-                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'4rem',color:p.c,opacity:0.08,lineHeight:1,marginBottom:'1.5rem'}}>{p.n}</div>
-                  <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.6rem',letterSpacing:'0.04em',color:'#fff',lineHeight:1.1,marginBottom:'1rem'}}>{p.t}</h3>
-                  <div style={{width:'24px',height:'2px',background:p.c,opacity:0.5,borderRadius:'2px'}} />
-                </div>
-              ))}
-            </div>
+          <ParticleRing color="#8b5cf6" />
+          <div style={{position:'absolute',inset:0,zIndex:2,background:'linear-gradient(to top,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.05) 55%,rgba(0,0,0,0.5) 100%)'}} />
+          {/* Team initials — right */}
+          <div style={{
+            position:'absolute',top:'50%',right:'6vw',transform:'translateY(-50%)',
+            zIndex:3,display:'flex',gap:'1px',
+            opacity:vis?1:0,transition:'opacity 1s ease 0.45s',
+          }}>
+            {[
+              {i:'JM',c:'#3b82f6',bg:'rgba(30,58,95,0.7)'},{i:'AK',c:'#8b5cf6',bg:'rgba(45,27,78,0.7)'},
+              {i:'DO',c:'#06b6d4',bg:'rgba(10,42,53,0.7)'},{i:'SP',c:'#10b981',bg:'rgba(26,46,26,0.7)'},
+              {i:'RV',c:'#f59e0b',bg:'rgba(42,31,10,0.7)'},
+            ].map(m => (
+              <div key={m.i} style={{width:'80px',height:'80px',background:m.bg,backdropFilter:'blur(10px)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',color:m.c}}>
+                {m.i}
+              </div>
+            ))}
           </div>
+          <SectionText
+            vis={vis}
+            eyebrow="Team"
+            line1="Join the"
+            line2="Mission."
+            ctaLabel="View Careers →"
+            ctaHref="/careers"
+          />
         </>)}
-      </Section>
+      </CinemaSection>
 
-      {/* TEAM */}
-      <Section id="team" bg="#000">
-        {vis => (<>
-          <NeuralCanvas color1="#f59e0b" color2="#3b82f6" density={40} />
-          <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.84)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto'}}>
-            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(245,158,11,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Team</div>
-            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3.5rem,9vw,9rem)',lineHeight:0.9,color:'#fff',marginBottom:'4rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>The People<br/>Doing the Work.</h2>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:'1px',background:'rgba(255,255,255,0.06)'}}>
-              {[
-                {i:'JM',n:'James Mercer',r:'Founder & Research Director',c:'#3b82f6',bg:'rgba(30,58,95,0.6)',t:'Alignment · Governance',d:'0.3s'},
-                {i:'AK',n:'Ananya Krishnaswamy',r:'Head of Interpretability',c:'#8b5cf6',bg:'rgba(45,27,78,0.6)',t:'Interpretability · Circuits',d:'0.4s'},
-                {i:'DO',n:'David Okafor',r:'Lead — Agentic Systems',c:'#06b6d4',bg:'rgba(10,42,53,0.6)',t:'Multi-Agent · NOVA',d:'0.5s'},
-                {i:'SP',n:'Soo-Jin Park',r:'Research Scientist',c:'#10b981',bg:'rgba(26,46,26,0.6)',t:'Red-Teaming · Evals',d:'0.6s'},
-                {i:'RV',n:'Rosa Vasquez',r:'ML Infrastructure Lead',c:'#f59e0b',bg:'rgba(42,31,10,0.6)',t:'Training · RLHF',d:'0.7s'},
-                {i:'+',n:'Join the Team',r:'Open Positions',c:'#3b82f6',bg:'rgba(59,130,246,0.04)',t:'View Careers →',d:'0.8s',href:'/careers'},
-              ].map(m => (
-                <a key={m.n} href={m.href || '/careers'} style={{background:m.bg,padding:'2.75rem 2rem',textDecoration:'none',display:'block',backdropFilter:'blur(8px)',transition:'background 0.3s',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform,background',transitionDuration:'0.7s,0.7s,0.3s',transitionDelay:m.d}}
-                  onMouseEnter={e=>e.currentTarget.style.background='rgba(20,28,45,0.8)'}
-                  onMouseLeave={e=>e.currentTarget.style.background=m.bg}>
-                  <div style={{width:'60px',height:'60px',borderRadius:'10px',background:`${m.c}18`,border:`1px solid ${m.c}33`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.5rem',color:m.c,marginBottom:'1.5rem'}}>{m.i}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'12px',color:'rgba(255,255,255,0.88)',letterSpacing:'0.03em',marginBottom:'0.35rem'}}>{m.n}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:m.c,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:'0.75rem'}}>{m.r}</div>
-
-                </a>
-              ))}
-            </div>
-          </div>
-        </>)}
-      </Section>
-
-      {/* ABOUT */}
-      <Section id="about" bg="#000" style={{minHeight:'80vh'}}>
-        {vis => (<>
-          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 60% 80% at 50% 50%,rgba(59,130,246,0.04) 0%,rgba(0,0,0,1) 70%)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'900px',margin:'0 auto',textAlign:'center'}}>
-            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.7)',marginBottom:'2rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Our Mission</div>
-            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:0.9,color:'#fff',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Intelligence<br/>That Serves<br/>Humanity.</h2>
-            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.2rem)',color:'rgba(255,255,255,0.3)',lineHeight:1.8,marginBottom:'4rem',maxWidth:'480px',margin:'0 auto 4rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}}>
-              Independent. Open. McKinney, Texas.
-            </p>
-            <div style={{display:'flex',gap:'4rem',justifyContent:'center',flexWrap:'wrap',opacity:vis?1:0,transition:'all 0.8s ease 0.5s'}}>
-              {[['3','Frontier Models'],['12+','Research Papers'],['5','Safety Researchers'],['100%','Open Research']].map(([n,l]) => (
-                <div key={l}>
-                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'5rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',lineHeight:1}}>{n}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.2)',letterSpacing:'0.15em',textTransform:'uppercase',marginTop:'8px'}}>{l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>)}
-      </Section>
-
-      {/* CONTACT */}
-      <Section id="contact" bg="#000" style={{minHeight:'80vh'}}>
-        {vis => (<>
-          <NeuralCanvas color1="#3b82f6" color2="#10b981" density={30} />
-          <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.9)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'720px',margin:'0 auto'}}>
-            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Contact</div>
-            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:0.9,color:'#fff',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Get In<br/>Touch.</h2>
-            <form style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.25rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}} onSubmit={handleSubmit}>
-              {[['First Name','text','first_name'],['Last Name','text','last_name']].map(([label,type,name]) => (
-                <div key={name}>
-                  <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>{label}</label>
-                  <input type={type} name={name} required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'}}
-                    onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
-                    onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
-                </div>
-              ))}
-              <div style={{gridColumn:'1/-1'}}>
-                <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>Email</label>
-                <input type="email" name="email" required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'}}
+      {/* ══ CONTACT ══ */}
+      <section id="contact" style={{position:'relative',background:'#000',padding:'10vh 6vw',borderTop:'1px solid rgba(255,255,255,0.06)',overflow:'hidden'}}>
+        <Noise />
+        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 50% 80% at 50% 50%,rgba(59,130,246,0.04) 0%,transparent 70%)'}} />
+        <div style={{position:'relative',zIndex:2,maxWidth:'720px',margin:'0 auto'}}>
+          <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.7)',marginBottom:'0.75rem'}}>Contact</div>
+          <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:.9,color:'#fff',marginBottom:'3rem'}}>Get In<br/>Touch.</h2>
+          <form style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.25rem'}} onSubmit={handleSubmit}>
+            {[['First Name','text','first_name'],['Last Name','text','last_name']].map(([label,type,name]) => (
+              <div key={name}>
+                <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>{label}</label>
+                <input type={type} name={name} required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'}}
                   onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
                   onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
               </div>
-              <div style={{gridColumn:'1/-1'}}>
-                <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>Message</label>
-                <textarea name="message" rows={5} required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',resize:'vertical',boxSizing:'border-box',transition:'border-color 0.2s'}}
-                  onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
-                  onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
-              </div>
-              <div style={{gridColumn:'1/-1'}}>
-                <button type="submit" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',background:'#3b82f6',color:'#fff',border:'none',padding:'13px 32px',borderRadius:'4px',cursor:'pointer',transition:'background 0.2s',boxShadow:'0 0 30px rgba(59,130,246,0.25)'}}
-                  onMouseEnter={e=>e.currentTarget.style.background='#2563eb'}
-                  onMouseLeave={e=>e.currentTarget.style.background='#3b82f6'}>Send Message →</button>
-              </div>
-            </form>
-          </div>
-        </>)}
-      </Section>
+            ))}
+            <div style={{gridColumn:'1/-1'}}>
+              <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>Email</label>
+              <input type="email" name="email" required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'}}
+                onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
+                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
+            </div>
+            <div style={{gridColumn:'1/-1'}}>
+              <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>Message</label>
+              <textarea name="message" rows={4} required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',resize:'vertical',boxSizing:'border-box',transition:'border-color 0.2s'}}
+                onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
+                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
+            </div>
+            <div style={{gridColumn:'1/-1'}}>
+              <button type="submit" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',background:'#3b82f6',color:'#fff',border:'none',padding:'13px 32px',borderRadius:'4px',cursor:'pointer',transition:'background 0.2s',boxShadow:'0 0 30px rgba(59,130,246,0.2)'}}
+                onMouseEnter={e=>e.currentTarget.style.background='#2563eb'}
+                onMouseLeave={e=>e.currentTarget.style.background='#3b82f6'}>Send Message →</button>
+            </div>
+          </form>
+        </div>
+      </section>
 
-      {/* FOOTER */}
+      {/* ── FOOTER ── */}
       <footer style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'3rem 6vw'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto',display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:'3rem',marginBottom:'2.5rem'}}>
           <div>
@@ -479,13 +430,13 @@ export default function Home() {
               <img src="/texasagilabs-logo.png" alt="" style={{width:'26px',height:'26px'}} />
               <span style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.15em',textTransform:'uppercase',color:'#fff'}}>Texas AGI Labs</span>
             </a>
-            <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.2)',lineHeight:1.8}}>An independent frontier AI research lab.<br/>McKinney, Texas.</p>
+            <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.2)',lineHeight:1.8}}>An independent frontier AI research lab.<br/>Texas.</p>
           </div>
           {[
             ['Research',[['Publications','/research'],['Blog','/blog'],['Safety','/#safety']]],
             ['Models',[['ALPHA A1','/models/alpha'],['OMEGA B1','/models/omega'],['NOVA C1','/models/nova']]],
-            ['Company',[['About','/#about'],['Careers','/careers'],['Contact','/#contact']]],
-          ].map(([title, links]) => (
+            ['Company',[['Team','/#team'],['Careers','/careers'],['Contact','/#contact']]],
+          ].map(([title,links]) => (
             <div key={title}>
               <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.25)',marginBottom:'1.25rem'}}>{title}</div>
               <ul style={{listStyle:'none',padding:0,margin:0,display:'flex',flexDirection:'column',gap:'0.7rem'}}>
@@ -499,7 +450,7 @@ export default function Home() {
           ))}
         </div>
         <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:'2rem',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'1rem'}}>
-          <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.18)',letterSpacing:'0.05em'}}>© 2025–2026 Texas AGI Labs. All rights reserved. McKinney, TX 75070</p>
+          <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.18)',letterSpacing:'0.05em'}}>© 2025–2026 Texas AGI Labs. All rights reserved.</p>
           <div style={{display:'flex',gap:'0.75rem'}}>
             {['Safety-First','Open Research','Texas-Built'].map(b => (
               <span key={b} style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 8px',border:'1px solid rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.2)',borderRadius:'3px'}}>{b}</span>
@@ -512,19 +463,17 @@ export default function Home() {
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
+        ::selection { background: rgba(59,130,246,0.3); }
         @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
         @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-33.333%)} }
-        @media(max-width:1024px) {
-          [style*="grid-template-columns: repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
-          [style*="grid-template-columns: repeat(4,1fr)"] { grid-template-columns: 1fr 1fr !important; }
-          [style*="grid-template-columns: repeat(6,1fr)"] { grid-template-columns: repeat(3,1fr) !important; }
-          [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; gap: 3rem !important; }
-          [style*="grid-template-columns: 2fr 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        @media(max-width:768px) {
+          nav > div { gap: 1rem !important; }
+          nav > div > a:not(:last-child) { display: none; }
+          [style*="right: 6vw"][style*="position: absolute"] { display: none !important; }
         }
-        @media(max-width:640px) {
-          nav > div { display: none !important; }
-          [style*="grid-template-columns: repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
-          [style*="grid-template-columns: repeat(6,1fr)"] { grid-template-columns: 1fr 1fr !important; }
+        @media(max-width:900px) {
+          [data-footer-grid] { grid-template-columns: 1fr 1fr !important; }
         }
       `}</style>
     </>
