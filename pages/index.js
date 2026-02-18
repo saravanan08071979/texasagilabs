@@ -261,10 +261,10 @@ export default function Home() {
           }}>
             {/* Logo */}
             <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none',flexShrink:0}}
-              onMouseEnter={e=>e.currentTarget.querySelector('span').style.color='rgba(255,255,255,0.9)'}
-              onMouseLeave={e=>e.currentTarget.querySelector('span').style.color='rgba(255,255,255,0.45)'}>
+              onMouseEnter={e=>e.currentTarget.querySelector('span').style.color='#fff'}
+              onMouseLeave={e=>e.currentTarget.querySelector('span').style.color='rgba(255,255,255,0.92)'}>
               <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" style={{width:'26px',height:'26px'}} />
-              <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)'}}>Texas AGI Labs</span>
+              <span style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(255,255,255,0.92)'}}>Texas AGI Labs</span>
             </a>
 
             {/* Nav items */}
@@ -276,23 +276,23 @@ export default function Home() {
                     const dd = e.currentTarget.querySelector('[data-dropdown]')
                     if(dd){ dd.style.opacity='1'; dd.style.pointerEvents='all'; dd.style.transform='translateY(0)' }
                     const lbl = e.currentTarget.querySelector('[data-label]')
-                    if(lbl) lbl.style.color='rgba(255,255,255,0.9)'
+                    if(lbl) lbl.style.color='#fff'
                   }}
                   onMouseLeave={e=>{
                     const dd = e.currentTarget.querySelector('[data-dropdown]')
                     if(dd){ dd.style.opacity='0'; dd.style.pointerEvents='none'; dd.style.transform='translateY(-6px)' }
                     const lbl = e.currentTarget.querySelector('[data-label]')
-                    if(lbl) lbl.style.color='rgba(255,255,255,0.45)'
+                    if(lbl) lbl.style.color='rgba(255,255,255,0.82)'
                   }}>
                   {/* Label */}
                   <div data-label style={{
-                    fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',
-                    textTransform:'uppercase',color:'rgba(255,255,255,0.45)',
+                    fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.18em',
+                    textTransform:'uppercase',color:'rgba(255,255,255,0.82)',
                     padding:'0 14px',height:'60px',display:'flex',alignItems:'center',gap:'5px',
                     cursor:'default',transition:'color .2s',userSelect:'none',
                   }}>
                     {nav.label}
-                    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{opacity:.4,marginTop:'1px'}}>
+                    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{opacity:.7,marginTop:'1px'}}>
                       <path d="M1 1l3 3 3-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
                     </svg>
                   </div>
@@ -336,12 +336,12 @@ export default function Home() {
             {/* CTA — desktop only */}
             <a href="/#contact" className="nav-desktop" style={{
               fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',
-              textTransform:'uppercase',color:'rgba(255,255,255,0.6)',textDecoration:'none',
-              border:'1px solid rgba(255,255,255,0.18)',padding:'7px 15px',borderRadius:'3px',
+              textTransform:'uppercase',color:'rgba(255,255,255,0.85)',textDecoration:'none',
+              border:'1px solid rgba(255,255,255,0.4)',padding:'7px 15px',borderRadius:'3px',
               transition:'all .2s',flexShrink:0,
             }}
-              onMouseEnter={e=>{e.currentTarget.style.color='#fff';e.currentTarget.style.borderColor='rgba(255,255,255,0.45)'}}
-              onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.6)';e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'}}>
+              onMouseEnter={e=>{e.currentTarget.style.color='#fff';e.currentTarget.style.borderColor='rgba(255,255,255,0.9)'}}
+              onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.85)';e.currentTarget.style.borderColor='rgba(255,255,255,0.4)'}}>
               Request Access
             </a>
 
