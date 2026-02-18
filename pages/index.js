@@ -226,7 +226,7 @@ export default function Home() {
           <h2 className="section-title">AGI Systems<br />in Development</h2>
           <p className="section-body">Three distinct model architectures, each targeting a critical capability dimension of the path to beneficial AGI.</p>
           <div className="models-grid reveal">
-            <div className="model-card">
+            <a href="/models/alpha" className="model-card model-card-link">
               <div className="model-glow" style={{background:'radial-gradient(circle, #3b82f6, transparent)'}}></div>
               <span className="model-badge badge-blue">◉ Operational</span>
               <div className="model-name" style={{color:'#3b82f6'}}>ALPHA</div>
@@ -238,8 +238,9 @@ export default function Home() {
                 <div className="stat-row"><span className="stat-label">Alignment Method</span><span className="stat-value">Constitutional AI + RLHF</span></div>
                 <div className="stat-row"><span className="stat-label">Status</span><span className="stat-value"><span className="status-dot" style={{background:'#10b981'}}></span>Operational</span></div>
               </div>
-            </div>
-            <div className="model-card">
+              <div className="model-cta" style={{color:'#3b82f6'}}>View Model Card →</div>
+            </a>
+            <a href="/models/omega" className="model-card model-card-link">
               <div className="model-glow" style={{background:'radial-gradient(circle, #8b5cf6, transparent)'}}></div>
               <span className="model-badge badge-purple">◎ In Testing</span>
               <div className="model-name" style={{color:'#8b5cf6'}}>OMEGA</div>
@@ -251,8 +252,9 @@ export default function Home() {
                 <div className="stat-row"><span className="stat-label">Evaluation</span><span className="stat-value">ARC-AGI + GPQA</span></div>
                 <div className="stat-row"><span className="stat-label">Status</span><span className="stat-value"><span className="status-dot" style={{background:'#f59e0b'}}></span>In Evaluation</span></div>
               </div>
-            </div>
-            <div className="model-card">
+              <div className="model-cta" style={{color:'#8b5cf6'}}>View Model Card →</div>
+            </a>
+            <a href="/models/nova" className="model-card model-card-link">
               <div className="model-glow" style={{background:'radial-gradient(circle, #06b6d4, transparent)'}}></div>
               <span className="model-badge badge-cyan">○ Research Phase</span>
               <div className="model-name" style={{color:'#06b6d4'}}>NOVA</div>
@@ -264,7 +266,8 @@ export default function Home() {
                 <div className="stat-row"><span className="stat-label">Focus</span><span className="stat-value">Agentic Coordination</span></div>
                 <div className="stat-row"><span className="stat-label">Status</span><span className="stat-value"><span className="status-dot" style={{background:'#3b82f6'}}></span>Research</span></div>
               </div>
-            </div>
+              <div className="model-cta" style={{color:'#06b6d4'}}>View Model Card →</div>
+            </a>
           </div>
         </div>
       </section>
@@ -380,7 +383,7 @@ export default function Home() {
             <p>An independent frontier AI research lab advancing the science of aligned, interpretable, and beneficial artificial general intelligence.</p>
           </div>
           <div className="footer-col"><h4>Research</h4><ul><li><a href="/research">Publications</a></li><li><a href="/#research">Alignment</a></li><li><a href="/#research">Interpretability</a></li><li><a href="/#research">Agentic Systems</a></li><li><a href="/#safety">Safety</a></li></ul></div>
-          <div className="footer-col"><h4>Models</h4><ul><li><a href="/#models">ALPHA A1</a></li><li><a href="/#models">OMEGA B1</a></li><li><a href="/#models">NOVA C1</a></li><li><a href="/#contact">API Access</a></li><li><a href="/#models">Model Cards</a></li></ul></div>
+          <div className="footer-col"><h4>Models</h4><ul><li><a href="/models/alpha">ALPHA A1</a></li><li><a href="/models/omega">OMEGA B1</a></li><li><a href="/models/nova">NOVA C1</a></li><li><a href="/#contact">API Access</a></li><li><a href="/#models">Model Cards</a></li></ul></div>
           <div className="footer-col"><h4>Company</h4><ul><li><a href="/#about">About</a></li><li><a href="/careers">Careers</a></li><li><a href="/#contact">Press</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Use</a></li></ul></div>
         </div>
         <div className="footer-bottom">
