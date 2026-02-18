@@ -115,7 +115,7 @@ function CinemaSection({ id, children, style={} }) {
   },[])
   return (
     <section ref={ref} id={id} style={{
-      position:'relative', height:'100vh', minHeight:'600px',
+      position:'relative', height:'100vh', minHeight:'100vh',
       display:'flex', flexDirection:'column', justifyContent:'flex-end',
       overflow:'hidden', background:'#000', ...style,
     }}>
@@ -129,7 +129,7 @@ function SectionText({ vis, line1, line2, ctaLabel, ctaHref, ghost=false }) {
   return (
     <div style={{
       position:'relative', zIndex:4,
-      padding:'0 7vw 7vh',
+      padding:'0 7vw 10vh',
     }}>
       <h2 style={{
         fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,
@@ -468,42 +468,62 @@ export default function Home() {
         </>)}
       </CinemaSection>
 
-      {/* ── CONTACT ── */}
-      <section id="contact" style={{position:'relative',background:'#000',padding:'12vh 7vw',borderTop:'1px solid rgba(255,255,255,0.05)',overflow:'hidden'}}>
-        <Noise />
-        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 50% 70% at 50% 50%,rgba(59,130,246,0.035) 0%,transparent 70%)'}} />
-        <div style={{position:'relative',zIndex:2,maxWidth:'680px',margin:'0 auto'}}>
-          <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.22em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',marginBottom:'1.5rem'}}>Contact</div>
-          <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:.88,color:'#fff',marginBottom:'3.5rem'}}>Get In<br/>Touch.</h2>
-          <form style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}} onSubmit={handleSubmit}>
-            {[['First Name','text','first_name'],['Last Name','text','last_name']].map(([label,type,name]) => (
-              <div key={name}>
-                <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>{label}</label>
-                <input type={type} name={name} required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',boxSizing:'border-box',transition:'border-color .2s'}}
-                  onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
-                  onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
-              </div>
-            ))}
-            <div style={{gridColumn:'1/-1'}}>
-              <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>Email</label>
-              <input type="email" name="email" required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',boxSizing:'border-box',transition:'border-color .2s'}}
-                onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
-                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
+      {/* ── 5. CONTACT ── */}
+      <CinemaSection id="contact">
+        {vis => (<>
+          <NeuralCanvas color1="#3b82f6" color2="#10b981" density={50} />
+          <div style={{position:'absolute',inset:0,zIndex:2,
+            background:'linear-gradient(to top, rgba(0,0,0,.95) 0%, rgba(0,0,0,.2) 50%, rgba(0,0,0,.5) 100%)'}} />
+          <div style={{
+            position:'relative',zIndex:4,
+            padding:'0 7vw 8vh',
+            display:'flex',
+            flexDirection:'column',
+            justifyContent:'flex-end',
+            height:'100%',
+          }}>
+            <div style={{
+              opacity:vis?1:0,transform:vis?'none':'translateY(24px)',
+              transition:'opacity 1.1s ease .1s, transform 1.1s ease .1s',
+              maxWidth:'620px',
+            }}>
+              <h2 style={{
+                fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,
+                fontSize:'clamp(2.2rem,5vw,5.5rem)',
+                lineHeight:.88,letterSpacing:'-.01em',
+                color:'#fff',margin:'0 0 3rem',
+              }}>Get In<br/><span style={{color:'rgba(255,255,255,0.88)'}}>Touch.</span></h2>
+              <form style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}} onSubmit={handleSubmit}>
+                {[['First Name','text','first_name'],['Last Name','text','last_name']].map(([label,type,name]) => (
+                  <div key={name}>
+                    <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>{label}</label>
+                    <input type={type} name={name} required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.12)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',boxSizing:'border-box',transition:'border-color .2s'}}
+                      onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.6)'}
+                      onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.12)'} />
+                  </div>
+                ))}
+                <div style={{gridColumn:'1/-1'}}>
+                  <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>Email</label>
+                  <input type="email" name="email" required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.12)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',boxSizing:'border-box',transition:'border-color .2s'}}
+                    onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.6)'}
+                    onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.12)'} />
+                </div>
+                <div style={{gridColumn:'1/-1'}}>
+                  <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>Message</label>
+                  <textarea name="message" rows={3} required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.12)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',resize:'none',boxSizing:'border-box',transition:'border-color .2s'}}
+                    onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.6)'}
+                    onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.12)'} />
+                </div>
+                <div style={{gridColumn:'1/-1',marginTop:'0.25rem'}}>
+                  <button type="submit" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.14em',textTransform:'uppercase',background:'#fff',color:'#000',border:'none',padding:'12px 28px',borderRadius:'3px',cursor:'pointer',transition:'opacity .2s'}}
+                    onMouseEnter={e=>e.currentTarget.style.opacity='.75'}
+                    onMouseLeave={e=>e.currentTarget.style.opacity='1'}>Send Message →</button>
+                </div>
+              </form>
             </div>
-            <div style={{gridColumn:'1/-1'}}>
-              <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>Message</label>
-              <textarea name="message" rows={4} required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',resize:'vertical',boxSizing:'border-box',transition:'border-color .2s'}}
-                onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
-                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
-            </div>
-            <div style={{gridColumn:'1/-1',marginTop:'0.5rem'}}>
-              <button type="submit" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.14em',textTransform:'uppercase',background:'#fff',color:'#000',border:'none',padding:'12px 28px',borderRadius:'3px',cursor:'pointer',transition:'opacity .2s'}}
-                onMouseEnter={e=>e.currentTarget.style.opacity='.75'}
-                onMouseLeave={e=>e.currentTarget.style.opacity='1'}>Send Message →</button>
-            </div>
-          </form>
-        </div>
-      </section>
+          </div>
+        </>)}
+      </CinemaSection>
 
       {/* ── FOOTER ── */}
       <footer style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'1.5rem 5vw'}}>
