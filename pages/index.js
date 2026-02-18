@@ -45,27 +45,62 @@ export default function Home() {
     return () => observer.disconnect()
   }, [])
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     const btn = e.target.querySelector('button[type=submit]')
-    btn.textContent = '✓ Message Sent!'
-    btn.style.background = '#10b981'
-    setTimeout(() => {
-      btn.textContent = 'Send Message →'
-      btn.style.background = ''
-    }, 3000)
+    btn.textContent = 'Sending...'
+    btn.disabled = true
+    try {
+      const res = await fetch('https://formspree.io/f/REPLACE_WITH_YOUR_ID', {
+        method: 'POST',
+        body: new FormData(e.target),
+        headers: { Accept: 'application/json' },
+      })
+      if (res.ok) {
+        btn.textContent = '✓ Message Sent!'
+        btn.style.background = '#10b981'
+        e.target.reset()
+      } else { throw new Error() }
+    } catch {
+      btn.textContent = '✗ Try Again'
+      btn.style.background = '#ef4444'
+    } finally {
+      btn.disabled = false
+      setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = '' }, 3000)
+    }
   }
+
 
   return (
     <>
       <Head>
         <title>Texas AGI Labs — Frontier Intelligence Research</title>
         <meta name="description" content="Texas AGI Labs is an independent research institution advancing the frontiers of Artificial General Intelligence — safely, responsibly, and openly." />
-        <meta property="og:title" content="Texas AGI Labs — Frontier Intelligence Research" />
-        <meta property="og:description" content="Pioneering aligned AGI systems for humanity's long-term benefit." />
-        <meta property="og:url" content="https://www.texasagilabs.com" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.texasagilabs.com" />
+
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+        <link rel="apple-touch-icon" href="/favicon-180.png" />
+
+        {/* OG / Social */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Texas AGI Labs — Frontier Intelligence Research" />
+        <meta property="og:description" content="Pioneering aligned AGI systems for humanity's long-term benefit. Based in McKinney, Texas." />
+        <meta property="og:url" content="https://www.texasagilabs.com" />
+        <meta property="og:image" content="https://www.texasagilabs.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Texas AGI Labs" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Texas AGI Labs — Frontier Intelligence Research" />
+        <meta name="twitter:description" content="Pioneering aligned AGI systems for humanity's long-term benefit." />
+        <meta name="twitter:image" content="https://www.texasagilabs.com/og-image.png" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
@@ -312,12 +347,12 @@ export default function Home() {
             <h2 className="section-title">Join the Mission</h2>
             <p className="section-body" style={{margin:'0 auto',textAlign:'center'}}>Whether you&apos;re a researcher, engineer, institution, or simply curious about the future of intelligence — we want to hear from you.</p>
             <form className="contact-form reveal" onSubmit={handleSubmit}>
-              <div className="form-field"><label htmlFor="fname">First Name</label><input type="text" id="fname" placeholder="Ada" /></div>
-              <div className="form-field"><label htmlFor="lname">Last Name</label><input type="text" id="lname" placeholder="Lovelace" /></div>
-              <div className="form-field"><label htmlFor="email">Email Address</label><input type="email" id="email" placeholder="ada@university.edu" /></div>
+              <div className="form-field"><label htmlFor="fname">First Name</label><input type="text" id="fname" name="first_name" placeholder="Ada" /></div>
+              <div className="form-field"><label htmlFor="lname">Last Name</label><input type="text" id="lname" name="last_name" placeholder="Lovelace" /></div>
+              <div className="form-field"><label htmlFor="email">Email Address</label><input type="email" id="email" name="email" placeholder="ada@university.edu" /></div>
               <div className="form-field">
                 <label htmlFor="role">I Am</label>
-                <select id="role">
+                <select id="role" name="role">
                   <option value="">Select your background</option>
                   <option>AI / ML Researcher</option><option>Software Engineer</option>
                   <option>Academic / Professor</option><option>Industry Professional</option>
@@ -325,7 +360,7 @@ export default function Home() {
                   <option>Journalist / Press</option><option>Other</option>
                 </select>
               </div>
-              <div className="form-field form-full"><label htmlFor="message">Message</label><textarea id="message" rows={5} placeholder="Tell us about your interest in AGI research, collaboration opportunities, or questions about our work..."></textarea></div>
+              <div className="form-field form-full"><label htmlFor="message">Message</label><textarea id="message" name="message" rows={5} placeholder="Tell us about your interest in AGI research, collaboration opportunities, or questions about our work..."></textarea></div>
               <div className="form-full" style={{textAlign:'center',marginTop:'0.5rem'}}>
                 <button type="submit" className="btn-primary" style={{padding:'16px 48px',fontSize:'13px'}}>Send Message →</button>
               </div>
