@@ -1,145 +1,120 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
+import { SiteNav, GLOBAL_STYLES } from '../components/Layout'
 
 export default function NotFound() {
   const [glitch, setGlitch] = useState(false)
+  const [path, setPath] = useState('/unknown')
 
   useEffect(() => {
+    if (typeof window !== 'undefined') setPath(window.location.pathname)
     const interval = setInterval(() => {
       setGlitch(true)
-      setTimeout(() => setGlitch(false), 150)
-    }, 3000)
+      setTimeout(() => setGlitch(false), 140)
+    }, 3200)
     return () => clearInterval(interval)
   }, [])
 
   return (
     <>
       <Head>
-        <title>404 — Page Not Found | Texas AGI Labs</title>
+        <title>404 — Texas AGI Labs</title>
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-        <link rel="apple-touch-icon" href="/favicon-180.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
       </Head>
+      <SiteNav />
 
-      <div className="grid-bg" />
-
-      <nav>
-        <a href="/" className="nav-logo">
-          <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" className="logo-img" />
-          <span className="logo-text">Texas AGI Labs</span>
-        </a>
-        <ul className="nav-links">
-          <li><a href="/#research">Research</a></li>
-          <li><a href="/#models">Models</a></li>
-          <li><a href="/#safety">Safety</a></li>
-          <li><a href="/#about">About</a></li>
-          <li><a href="/#contact">Contact</a></li>
-        </ul>
-        <a href="/#contact" className="nav-cta">Request Access</a>
-      </nav>
-
-      <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',paddingTop:'64px',position:'relative',overflow:'hidden'}}>
-
+      <div style={{background:'#000',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',paddingTop:'64px',position:'relative',overflow:'hidden'}}>
+        {/* Noise */}
+        <div style={{position:'absolute',inset:0,pointerEvents:'none',opacity:0.035,backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",backgroundSize:'180px 180px'}} />
         {/* Glow */}
-        <div style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',width:'600px',height:'400px',background:'radial-gradient(ellipse,rgba(59,130,246,0.08) 0%,rgba(139,92,246,0.04) 40%,transparent 70%)',pointerEvents:'none'}} />
+        <div style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',width:'800px',height:'600px',background:'radial-gradient(ellipse,rgba(59,130,246,0.05) 0%,rgba(139,92,246,0.03) 40%,transparent 70%)',pointerEvents:'none'}} />
 
-        <div style={{textAlign:'center',position:'relative',zIndex:1,padding:'2rem'}}>
+        <div style={{textAlign:'center',position:'relative',zIndex:1,padding:'2rem',maxWidth:'700px',width:'100%'}}>
 
-          {/* Terminal-style error code */}
-          <div style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',color:'#4a5568',letterSpacing:'0.15em',textTransform:'uppercase',marginBottom:'1.5rem'}}>
-            <span style={{color:'#ef4444'}}>ERROR</span> · SEGMENT FAULT · INFERENCE HALTED
+          <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(239,68,68,0.8)',marginBottom:'2rem'}}>
+            ✗ ERROR · SEGMENT FAULT · INFERENCE HALTED
           </div>
 
-          {/* 404 */}
-          <div style={{
-            fontFamily:"'Bebas Neue',sans-serif",
-            fontSize:'clamp(8rem,25vw,22rem)',
-            lineHeight:0.85,
-            letterSpacing:'0.04em',
-            background:'linear-gradient(135deg,#1a2d4a,#2d1b4e,#0a2a35)',
-            WebkitBackgroundClip:'text',
-            WebkitTextFillColor:'transparent',
-            backgroundClip:'text',
-            userSelect:'none',
-            filter: glitch ? 'blur(2px)' : 'none',
-            transform: glitch ? 'translateX(3px)' : 'translateX(0)',
-            transition: glitch ? 'none' : 'all 0.1s',
-            position:'relative',
-          }}>
-            404
-            {/* Glitch overlay */}
+          {/* Giant 404 */}
+          <div style={{position:'relative',display:'inline-block',marginBottom:'0'}}>
+            <div style={{
+              fontFamily:"'Bebas Neue',sans-serif",
+              fontSize:'clamp(8rem,28vw,22rem)',
+              lineHeight:0.85,
+              letterSpacing:'0.04em',
+              background:'linear-gradient(135deg,rgba(30,58,95,0.9),rgba(45,27,78,0.9),rgba(10,42,53,0.9))',
+              WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',
+              userSelect:'none',
+              filter:glitch?'blur(1px)':'none',
+              transform:glitch?'translateX(4px)':'translateX(0)',
+              transition:glitch?'none':'all 0.1s',
+            }}>404</div>
             {glitch && (
               <div style={{
-                position:'absolute',top:0,left:0,right:0,bottom:0,
+                position:'absolute',top:0,left:0,right:0,
                 fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:'clamp(8rem,25vw,22rem)',
-                lineHeight:0.85,
+                fontSize:'clamp(8rem,28vw,22rem)',
+                lineHeight:0.85, letterSpacing:'0.04em',
                 background:'linear-gradient(135deg,#3b82f6,#8b5cf6)',
-                WebkitBackgroundClip:'text',
-                WebkitTextFillColor:'transparent',
-                backgroundClip:'text',
-                transform:'translateX(-6px)',
-                opacity:0.4,
-                pointerEvents:'none',
+                WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',
+                transform:'translateX(-8px)',opacity:0.35,pointerEvents:'none',
               }}>404</div>
             )}
           </div>
 
-          {/* Message */}
-          <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(1.5rem,4vw,3rem)',letterSpacing:'0.04em',color:'#e8edf5',margin:'2rem 0 1rem'}}>
+          <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(1.5rem,4vw,3rem)',letterSpacing:'0.04em',color:'#fff',margin:'2rem 0 1rem'}}>
             This Page Does Not Exist
           </h1>
-          <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'1.05rem',color:'#6b7a94',lineHeight:1.7,maxWidth:'480px',margin:'0 auto 3rem'}}>
+          <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'1rem',color:'rgba(255,255,255,0.35)',lineHeight:1.8,maxWidth:'420px',margin:'0 auto 3rem'}}>
             The page you are looking for may have been moved, deleted, or perhaps never existed in this timeline.
           </p>
 
-          {/* Terminal block */}
-          <div className="terminal" style={{maxWidth:'480px',margin:'0 auto 3rem',textAlign:'left'}}>
-            <div className="terminal-bar">
-              <div className="term-dot red"></div>
-              <div className="term-dot yellow"></div>
-              <div className="term-dot green"></div>
-              <span className="terminal-title">route_resolver.sh</span>
+          {/* Terminal */}
+          <div style={{background:'#06080f',border:'1px solid rgba(255,255,255,0.08)',borderRadius:'8px',overflow:'hidden',fontFamily:"'DM Mono',monospace",textAlign:'left',marginBottom:'3rem'}}>
+            <div style={{background:'rgba(255,255,255,0.04)',padding:'0.6rem 1.25rem',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',gap:'0.5rem'}}>
+              {['#ef4444','#f59e0b','#10b981'].map(c=><div key={c} style={{width:'9px',height:'9px',borderRadius:'50%',background:c}} />)}
+              <span style={{fontSize:'10px',color:'rgba(255,255,255,0.25)',marginLeft:'0.5rem',letterSpacing:'0.08em'}}>route_resolver.sh</span>
             </div>
-            <div className="terminal-body">
-              <span className="term-line"><span className="term-prompt">$ </span><span className="term-cmd">resolve --path {typeof window !== 'undefined' ? window.location.pathname : '/unknown'}</span></span>
-              <span className="term-line term-comment"># Searching route table...</span>
-              <span className="term-line" style={{color:'#ef4444'}}>✗ No matching route found</span>
-              <span className="term-line term-comment"># Checking archived paths...</span>
-              <span className="term-line" style={{color:'#ef4444'}}>✗ Path not in archive</span>
-              <span className="term-line">&nbsp;</span>
-              <span className="term-line term-warn">⚠ Suggestion: return to known coordinates</span>
-              <span className="term-line"><span className="term-prompt">$ </span><span className="term-cursor"></span></span>
+            <div style={{padding:'1.5rem',fontSize:'11px',lineHeight:2,color:'rgba(255,255,255,0.4)'}}>
+              <div><span style={{color:'rgba(59,130,246,0.7)'}}>$ </span>resolve --path {path}</div>
+              <div style={{color:'rgba(255,255,255,0.2)'}}># Searching route table...</div>
+              <div style={{color:'#ef4444'}}>✗ No matching route found</div>
+              <div style={{color:'rgba(255,255,255,0.2)'}}># Checking archived paths...</div>
+              <div style={{color:'#ef4444'}}>✗ Path not in archive</div>
+              <div style={{color:'#f59e0b'}}>⚠ Suggestion: return to known coordinates</div>
+              <div><span style={{color:'rgba(59,130,246,0.7)'}}>$ </span><span style={{borderRight:'1px solid rgba(255,255,255,0.4)',animation:'blink 1s step-end infinite'}}&nbsp;</span></div>
             </div>
           </div>
 
-          {/* Nav links */}
-          <div style={{display:'flex',gap:'1rem',justifyContent:'center',flexWrap:'wrap',marginBottom:'3rem'}}>
-            <a href="/" className="btn-primary">← Return Home</a>
-            <a href="/research" className="btn-ghost">Research</a>
-            <a href="/blog" className="btn-ghost">Blog</a>
-            <a href="/careers" className="btn-ghost">Careers</a>
+          {/* Nav */}
+          <div style={{display:'flex',gap:'1rem',justifyContent:'center',flexWrap:'wrap',marginBottom:'2.5rem'}}>
+            <a href="/" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#fff',background:'#3b82f6',padding:'12px 24px',borderRadius:'4px',textDecoration:'none',transition:'opacity 0.2s'}}
+              onMouseEnter={e=>e.currentTarget.style.opacity='0.8'}
+              onMouseLeave={e=>e.currentTarget.style.opacity='1'}>← Return Home</a>
+            {[['Research','/research'],['Blog','/blog'],['Careers','/careers']].map(([l,h])=>(
+              <a key={l} href={h} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.5)',padding:'12px 24px',borderRadius:'4px',textDecoration:'none',border:'1px solid rgba(255,255,255,0.1)',transition:'border-color 0.2s'}}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.3)'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'}>{l}</a>
+            ))}
           </div>
 
-          {/* Quick links */}
-          <div style={{display:'flex',gap:'2rem',justifyContent:'center',flexWrap:'wrap'}}>
-            {[
-              {label:'ALPHA Model',href:'/models/alpha',color:'#3b82f6'},
-              {label:'OMEGA Model',href:'/models/omega',color:'#8b5cf6'},
-              {label:'NOVA Model',href:'/models/nova',color:'#06b6d4'},
-            ].map(l => (
-              <a key={l.label} href={l.href} style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.08em',textTransform:'uppercase',color:l.color,textDecoration:'none',transition:'opacity 0.2s'}}
+          <div style={{display:'flex',gap:'2.5rem',justifyContent:'center',flexWrap:'wrap'}}>
+            {[['ALPHA','/models/alpha','#3b82f6'],['OMEGA','/models/omega','#8b5cf6'],['NOVA','/models/nova','#06b6d4']].map(([l,h,c])=>(
+              <a key={l} href={h} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.1em',textTransform:'uppercase',color:c,textDecoration:'none',transition:'opacity 0.2s'}}
                 onMouseEnter={e=>e.currentTarget.style.opacity='0.6'}
-                onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
-                {l.label} →
-              </a>
+                onMouseLeave={e=>e.currentTarget.style.opacity='1'}>{l} →</a>
             ))}
           </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        ${GLOBAL_STYLES}
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+      `}</style>
     </>
   )
 }
