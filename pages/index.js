@@ -51,7 +51,7 @@ export default function Home() {
     btn.textContent = 'Sending...'
     btn.disabled = true
     try {
-      const res = await fetch('https://formspree.io/f/xkovzbno', {
+      const res = await fetch('https://formspree.io/f/REPLACE_WITH_YOUR_ID', {
         method: 'POST',
         body: new FormData(e.target),
         headers: { Accept: 'application/json' },
@@ -379,9 +379,9 @@ export default function Home() {
             </a>
             <p>An independent frontier AI research lab advancing the science of aligned, interpretable, and beneficial artificial general intelligence.</p>
           </div>
-          <div className="footer-col"><h4>Research</h4><ul><li><a href="#">Alignment</a></li><li><a href="#">Interpretability</a></li><li><a href="#">Agentic Systems</a></li><li><a href="#">Evaluations</a></li><li><a href="#">Publications</a></li></ul></div>
-          <div className="footer-col"><h4>Models</h4><ul><li><a href="#">ALPHA A1</a></li><li><a href="#">OMEGA B1</a></li><li><a href="#">NOVA C1</a></li><li><a href="#">API Access</a></li><li><a href="#">Model Cards</a></li></ul></div>
-          <div className="footer-col"><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Use</a></li></ul></div>
+          <div className="footer-col"><h4>Research</h4><ul><li><a href="/research">Publications</a></li><li><a href="/#research">Alignment</a></li><li><a href="/#research">Interpretability</a></li><li><a href="/#research">Agentic Systems</a></li><li><a href="/#safety">Safety</a></li></ul></div>
+          <div className="footer-col"><h4>Models</h4><ul><li><a href="/#models">ALPHA A1</a></li><li><a href="/#models">OMEGA B1</a></li><li><a href="/#models">NOVA C1</a></li><li><a href="/#contact">API Access</a></li><li><a href="/#models">Model Cards</a></li></ul></div>
+          <div className="footer-col"><h4>Company</h4><ul><li><a href="/#about">About</a></li><li><a href="/careers">Careers</a></li><li><a href="/#contact">Press</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Use</a></li></ul></div>
         </div>
         <div className="footer-bottom">
           <p>© 2025–2026 Texas AGI Labs. All rights reserved. McKinney, TX 75070</p>
