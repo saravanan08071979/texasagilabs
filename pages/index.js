@@ -118,6 +118,7 @@ export default function Home() {
           <li><a href="#research">Research</a></li>
           <li><a href="#models">Models</a></li>
           <li><a href="#safety">Safety</a></li>
+          <li><a href="#team">Team</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
@@ -338,6 +339,111 @@ export default function Home() {
                 <li><span className="icon">◈</span><span><strong className="value-strong">Globally Optimistic:</strong> We believe AGI, done right, will be humanity&apos;s greatest achievement — a lever for eliminating poverty, disease, and ignorance.</span></li>
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TEAM */}
+      <section id="team" style={{borderTop:'1px solid rgba(255,255,255,0.07)'}}>
+        <div className="section-inner">
+          <div className="section-label">Team</div>
+          <h2 className="section-title">The People<br/>Behind the Work.</h2>
+          <p className="section-body" style={{marginBottom:'4rem'}}>A small, focused team of researchers and engineers united by one belief — that AGI safety is the most important problem of our time.</p>
+
+          <div className="team-grid reveal">
+
+            <div className="team-card">
+              <div className="team-avatar" style={{background:'linear-gradient(135deg,#1e3a5f,#1e2d4a)'}}>
+                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#3b82f6'}}>JM</span>
+              </div>
+              <div className="team-info">
+                <h3 className="team-name">James Mercer</h3>
+                <div className="team-role" style={{color:'#3b82f6'}}>Founder & Research Director</div>
+                <p className="team-bio">Former alignment researcher. Focused on scalable oversight, constitutional AI methods, and the long-term governance of frontier systems.</p>
+                <div className="team-tags">
+                  <span className="team-tag">Alignment</span>
+                  <span className="team-tag">Constitutional AI</span>
+                  <span className="team-tag">Governance</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="team-card">
+              <div className="team-avatar" style={{background:'linear-gradient(135deg,#2d1b4e,#1e1a3a)'}}>
+                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#8b5cf6'}}>AK</span>
+              </div>
+              <div className="team-info">
+                <h3 className="team-name">Ananya Krishnaswamy</h3>
+                <div className="team-role" style={{color:'#8b5cf6'}}>Head of Interpretability</div>
+                <p className="team-bio">Pioneering mechanistic analysis of large transformers. Leads our circuit-level audit programs and deceptive alignment probes across the model suite.</p>
+                <div className="team-tags">
+                  <span className="team-tag">Interpretability</span>
+                  <span className="team-tag">Circuits</span>
+                  <span className="team-tag">Transformers</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="team-card">
+              <div className="team-avatar" style={{background:'linear-gradient(135deg,#0a2a35,#0a1e28)'}}>
+                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#06b6d4'}}>DO</span>
+              </div>
+              <div className="team-info">
+                <h3 className="team-name">David Okafor</h3>
+                <div className="team-role" style={{color:'#06b6d4'}}>Lead — Agentic Systems</div>
+                <p className="team-bio">Architect of the NOVA multi-agent coordination framework. Expert in safe autonomy envelopes, agent coordination protocols, and emergent behavior detection.</p>
+                <div className="team-tags">
+                  <span className="team-tag">Agentic AI</span>
+                  <span className="team-tag">NOVA</span>
+                  <span className="team-tag">Safety</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="team-card">
+              <div className="team-avatar" style={{background:'linear-gradient(135deg,#1a2e1a,#0f1f0f)'}}>
+                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#10b981'}}>SP</span>
+              </div>
+              <div className="team-info">
+                <h3 className="team-name">Soo-Jin Park</h3>
+                <div className="team-role" style={{color:'#10b981'}}>Research Scientist — Evaluations</div>
+                <p className="team-bio">Designed the SAFE-AGENT benchmark suite. Runs structured red-teaming programs and builds the evaluation infrastructure used across all model versions.</p>
+                <div className="team-tags">
+                  <span className="team-tag">Evaluations</span>
+                  <span className="team-tag">Red-Teaming</span>
+                  <span className="team-tag">Benchmarks</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="team-card">
+              <div className="team-avatar" style={{background:'linear-gradient(135deg,#2a1f0a,#1f1505)'}}>
+                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#f59e0b'}}>RV</span>
+              </div>
+              <div className="team-info">
+                <h3 className="team-name">Rosa Vasquez</h3>
+                <div className="team-role" style={{color:'#f59e0b'}}>ML Infrastructure Lead</div>
+                <p className="team-bio">Builds and maintains the distributed training infrastructure powering our frontier model research. Expert in large-scale RLHF pipelines and experiment reproducibility.</p>
+                <div className="team-tags">
+                  <span className="team-tag">Infrastructure</span>
+                  <span className="team-tag">Training</span>
+                  <span className="team-tag">RLHF</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="team-card team-card-join">
+              <div className="team-avatar" style={{background:'rgba(59,130,246,0.05)',border:'1px dashed rgba(59,130,246,0.3)'}}>
+                <span style={{fontSize:'2rem'}}>+</span>
+              </div>
+              <div className="team-info">
+                <h3 className="team-name" style={{color:'#6b7a94'}}>You?</h3>
+                <div className="team-role" style={{color:'#3b82f6'}}>Open Positions</div>
+                <p className="team-bio">We are actively hiring research scientists, ML engineers, and interns. If you want to work on the most important problem of our time — apply.</p>
+                <a href="/careers" className="team-cta">View Open Roles →</a>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>

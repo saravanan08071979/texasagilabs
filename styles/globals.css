@@ -197,3 +197,19 @@ footer { border-top: 1px solid var(--border); padding: 3rem 2rem; max-width: 120
 .model-card-link:hover { background: var(--panel) !important; }
 .model-cta { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1.5rem; opacity: 0; transition: opacity 0.2s; }
 .model-card-link:hover .model-cta { opacity: 1; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* TEAM SECTION */
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.07); }
+.team-card { background: var(--bg); padding: 2.5rem; display: flex; gap: 1.5rem; transition: background 0.2s; align-items: flex-start; }
+.team-card:hover { background: var(--surface); }
+.team-card-join { cursor: default; }
+.team-avatar { width: 64px; height: 64px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.team-info { flex: 1; }
+.team-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.04em; color: var(--text); margin-bottom: 0.25rem; }
+.team-role { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }
+.team-bio { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+.team-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.team-tag { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.07); color: var(--muted); }
+.team-cta { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+.team-cta:hover { opacity: 0.7; }
