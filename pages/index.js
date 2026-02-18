@@ -260,10 +260,10 @@ export default function Home() {
             transition:'all .5s ease',
           }}>
             {/* Logo */}
-            <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none',flexShrink:0}}
-              onMouseEnter={e=>e.currentTarget.querySelector('span').style.color='#fff'}
-              onMouseLeave={e=>e.currentTarget.querySelector('span').style.color='rgba(255,255,255,0.92)'}>
-              <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" style={{width:'26px',height:'26px'}} />
+            <a href="/" style={{display:'flex',alignItems:'center',gap:'6px',textDecoration:'none',flexShrink:0}}
+              onMouseEnter={e=>e.currentTarget.querySelector('span').style.opacity='0.65'}
+              onMouseLeave={e=>e.currentTarget.querySelector('span').style.opacity='1'}>
+              <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" style={{width:'28px',height:'28px'}} />
               <span style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(255,255,255,0.92)'}}>Texas AGI Labs</span>
             </a>
 
