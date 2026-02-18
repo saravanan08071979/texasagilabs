@@ -413,9 +413,17 @@ export default function Home() {
       {/* ── 1. HERO ── */}
       <CinemaSection id="hero">
         {vis => (<>
-          <NeuralCanvas color1="#3b82f6" color2="#8b5cf6" density={90} />
+          <video
+            autoPlay muted loop playsInline
+            style={{
+              position:'absolute',inset:0,width:'100%',height:'100%',
+              objectFit:'cover',objectPosition:'center',zIndex:0,
+            }}
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
           <div style={{position:'absolute',inset:0,zIndex:2,
-            background:'linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.25) 100%)'}} />
+            background:'linear-gradient(to top, rgba(10,15,30,.88) 0%, rgba(10,15,30,.15) 50%, rgba(10,15,30,.4) 100%)'}} />
           <SectionText vis={vis}
             line1="Researching Aligned"
             line2="Intelligence."
