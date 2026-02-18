@@ -132,18 +132,18 @@ function SectionText({ vis, line1, line2, ctaLabel, ctaHref, ghost=false }) {
       padding:'0 7vw 7vh',
     }}>
       <h2 style={{
-        fontFamily:"'Bebas Neue',sans-serif",
+        fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,
         fontSize:'clamp(4rem,10.5vw,11rem)',
-        lineHeight:.86, letterSpacing:'.015em',
+        lineHeight:.88, letterSpacing:'-.01em',
         color:'#fff', margin:'0 0 3rem',
         opacity:vis?1:0, transform:vis?'none':'translateY(24px)',
         transition:'opacity 1.1s ease .1s, transform 1.1s ease .1s',
       }}>
         {line1}<br/>
         <span style={{
-          color:'rgba(255,255,255,0.38)',
+          color:'rgba(255,255,255,0.88)',
           display:'block',
-          marginTop:'.05em',
+          marginTop:'.02em',
         }}>{line2}</span>
       </h2>
       <a href={ctaHref} style={{
@@ -217,7 +217,7 @@ export default function Home() {
         <meta name="twitter:image" content="https://www.texasagilabs.com/og-image.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
       </Head>
 
       {/* NAV */}
