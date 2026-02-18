@@ -47,43 +47,55 @@ function NeuralCanvas({ color1 = '#3b82f6', color2 = '#8b5cf6', density = 70 }) 
     resize(); draw()
     window.addEventListener('resize',resize)
     return ()=>{ cancelAnimationFrame(animId); window.removeEventListener('resize',resize) }
-  },[color1,color2,density])
+[O  },[color1,color2,density])
   return <canvas ref={ref} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
 }
 
-function ParticleRing({ color='#3b82f6' }) {
+function ParticleRing({ color }) {
+  color = color || '#3b82f6'
   const ref = useRef(null)
   useEffect(() => {
     const canvas = ref.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let animId, t=0, w, h
-    const [rv,gv,bv] = [parseInt(color.slice(1,3),16),parseInt(color.slice(3,5),16),parseInt(color.slice(5,7),16)]
-    function resize() { w=canvas.width=canvas.offsetWidth; h=canvas.height=canvas.offsetHeight }
+    let animId, t = 0, w, h
+    const rv = parseInt(color.slice(1,3),16)
+    const gv = parseInt(color.slice(3,5),16)
+    const bv = parseInt(color.slice(5,7),16)
+    function resize() { w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight }
     function draw() {
-      ctx.clearRect(0,0,w,h); t+=.003
-      const cx=w/2, cy=h/2, maxR=Math.min(w,h)*.45
-      for(let ring=0;ring<6;ring++) {
-        const r=maxR*(.3+ring*.14), num=45+ring*15
-        for(let i=0;i<num;i++) {
-          const angle=(i/num)*Math.PI*2+t*(ring%2===0?1:-1)*(.2+ring*.06)
-          const x=cx+Math.cos(angle)*r, y=cy+Math.sin(angle)*r*.3
-          const alpha=.08+.15*Math.sin(angle*3+t*2)
-          ctx.beginPath(); ctx.arc(x,y,.8+Math.sin(angle*5+t)*.4,0,Math.PI*2)
-[O          ctx.fillStyle=`rgba(${rv},${gv},${bv},${alpha})`; ctx.fill()
+      ctx.clearRect(0,0,w,h)
+      t += 0.003
+      const cx = w/2, cy = h/2, maxR = Math.min(w,h)*0.45
+      for (let ring = 0; ring < 6; ring++) {
+        const r = maxR*(0.3+ring*0.14)
+        const num = 45+ring*15
+        for (let i = 0; i < num; i++) {
+          const dir = ring%2===0 ? 1 : -1
+          const angle = (i/num)*Math.PI*2 + t*dir*(0.2+ring*0.06)
+          const x = cx + Math.cos(angle)*r
+          const y = cy + Math.sin(angle)*r*0.3
+          const alpha = 0.08 + 0.15*Math.sin(angle*3+t*2)
+          const size = 0.8 + Math.sin(angle*5+t)*0.4
+          ctx.beginPath()
+          ctx.arc(x, y, size, 0, Math.PI*2)
+          ctx.fillStyle = 'rgba(' + rv + ',' + gv + ',' + bv + ',' + alpha + ')'
+          ctx.fill()
         }
       }
-      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,maxR*.25)
-      g.addColorStop(0,`rgba(${rv},${gv},${bv},0.06)`)
-      g.addColorStop(1,`rgba(${rv},${gv},${bv},0)`)
-      ctx.beginPath(); ctx.arc(cx,cy,maxR*.25,0,Math.PI*2)
-      ctx.fillStyle=g; ctx.fill()
-      animId=requestAnimationFrame(draw)
+      const g = ctx.createRadialGradient(cx,cy,0,cx,cy,maxR*0.25)
+      g.addColorStop(0, 'rgba(' + rv + ',' + gv + ',' + bv + ',0.06)')
+      g.addColorStop(1, 'rgba(' + rv + ',' + gv + ',' + bv + ',0)')
+      ctx.beginPath()
+      ctx.arc(cx, cy, maxR*0.25, 0, Math.PI*2)
+      ctx.fillStyle = g
+      ctx.fill()
+      animId = requestAnimationFrame(draw)
     }
     resize(); draw()
-    window.addEventListener('resize',resize)
-    return ()=>{ cancelAnimationFrame(animId); window.removeEventListener('resize',resize) }
-  },[color])
+    window.addEventListener('resize', resize)
+    return function() { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
+  }, [color])
   return <canvas ref={ref} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
 }
 
@@ -218,7 +230,7 @@ export default function Home() {
             { label:'Contact', href:'/#contact', desc:'Get in touch' },
           ]},
           { label:'Models', items:[
-[I            { label:'ALPHA A1', href:'/models/alpha', desc:'Safe deployment · S-2 certified' },
+            { label:'ALPHA A1', href:'/models/alpha', desc:'Safe deployment · S-2 certified' },
             { label:'OMEGA B1', href:'/models/omega', desc:'Robust cognition · R-1 certified' },
             { label:'NOVA C1', href:'/models/nova', desc:'Agent integration · I-3 certified' },
           ]},
@@ -339,7 +351,7 @@ export default function Home() {
               display:'flex',flexDirection:'column',gap:'5px',flexShrink:0,
             }}>
               <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
-[O                transition:'all .25s',transform:menuOpen?'rotate(45deg) translate(4.5px,4.5px)':'none'}} />
+                transition:'all .25s',transform:menuOpen?'rotate(45deg) translate(4.5px,4.5px)':'none'}} />
               <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
                 transition:'all .25s',opacity:menuOpen?0:1}} />
               <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
@@ -391,7 +403,7 @@ export default function Home() {
                   textTransform:'uppercase',color:'rgba(255,255,255,0.7)',textDecoration:'none',
                   padding:'12px 0',borderBottom:'1px solid rgba(255,255,255,0.04)',
                   transition:'color .15s',
-                }}
+[I                }}
                   onMouseEnter={e=>e.currentTarget.style.color='#fff'}
                   onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.7)'}>
                   {item.label}
@@ -455,7 +467,7 @@ export default function Home() {
           />
         </>)}
       </CinemaSection>
-
+[O
       {/* ── 4. MISSION ── */}
       <CinemaSection id="team">
         {vis => (<>
@@ -497,7 +509,7 @@ export default function Home() {
               <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.14em',textTransform:'uppercase',color:'rgba(255,255,255,0.22)',display:'block',marginBottom:'8px'}}>Message</label>
               <textarea name="message" rows={4} required style={{width:'100%',background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',padding:'11px 13px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'11px',outline:'none',resize:'vertical',boxSizing:'border-box',transition:'border-color .2s'}}
                 onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
-[I                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
+                onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
             </div>
             <div style={{gridColumn:'1/-1',marginTop:'0.5rem'}}>
               <button type="submit" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.14em',textTransform:'uppercase',background:'#fff',color:'#000',border:'none',padding:'12px 28px',borderRadius:'3px',cursor:'pointer',transition:'opacity .2s'}}
