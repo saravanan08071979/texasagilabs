@@ -256,7 +256,7 @@ export default function Home() {
             </a>
 
             {/* Nav items */}
-            <div style={{display:'flex',alignItems:'center',gap:'0.25rem',marginLeft:'3rem',flex:1}}>
+            <div className="nav-items" style={{display:'flex',alignItems:'center',gap:'0.25rem',marginLeft:'3rem',flex:1}}>
               {NAV_ITEMS.map(nav => (
                 <div key={nav.label}
                   style={{position:'relative'}}
@@ -321,8 +321,8 @@ export default function Home() {
               ))}
             </div>
 
-            {/* CTA */}
-            <a href="/#contact" style={{
+            {/* CTA — desktop only */}
+            <a href="/#contact" className="nav-desktop" style={{
               fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',
               textTransform:'uppercase',color:'rgba(255,255,255,0.6)',textDecoration:'none',
               border:'1px solid rgba(255,255,255,0.18)',padding:'7px 15px',borderRadius:'3px',
@@ -332,7 +332,78 @@ export default function Home() {
               onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.6)';e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'}}>
               Request Access
             </a>
+
+            {/* Hamburger — mobile only */}
+            <button className="nav-mobile" onClick={()=>setMenuOpen(o=>!o)} style={{
+              background:'none',border:'none',cursor:'pointer',padding:'8px',
+              display:'flex',flexDirection:'column',gap:'5px',flexShrink:0,
+            }}>
+              <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
+                transition:'all .25s',transform:menuOpen?'rotate(45deg) translate(4.5px,4.5px)':'none'}} />
+              <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
+                transition:'all .25s',opacity:menuOpen?0:1}} />
+              <span style={{display:'block',width:'22px',height:'1.5px',background:'rgba(255,255,255,0.7)',
+                transition:'all .25s',transform:menuOpen?'rotate(-45deg) translate(4.5px,-4.5px)':'none'}} />
+            </button>
           </nav>
+      {/* ── MOBILE MENU ── */}
+      <div style={{
+        position:'fixed',top:'60px',left:0,right:0,bottom:0,zIndex:999,
+        background:'rgba(0,0,0,0.97)',backdropFilter:'blur(20px)',
+        transform:menuOpen?'translateX(0)':'translateX(100%)',
+        transition:'transform .35s ease',
+        overflowY:'auto',
+        padding:'2rem 6vw',
+        display:'flex',flexDirection:'column',gap:'0',
+      }}>
+        {[
+          { label:'About', items:[
+            {label:'Mission',href:'/#hero'},{label:'Team',href:'/#team'},
+            {label:'Careers',href:'/careers'},{label:'Contact',href:'/#contact'},
+          ]},
+          { label:'Models', items:[
+            {label:'ALPHA A1',href:'/models/alpha'},{label:'OMEGA B1',href:'/models/omega'},
+            {label:'NOVA C1',href:'/models/nova'},
+          ]},
+          { label:'Safety', items:[
+            {label:'Safety Approach',href:'/#safety'},{label:'Publications',href:'/research'},
+            {label:'Certifications',href:'/#safety'},
+          ]},
+          { label:'Research', items:[
+            {label:'All Papers',href:'/research'},{label:'Blog',href:'/blog'},
+            {label:'Research Areas',href:'/research'},
+          ]},
+          { label:'Team', items:[
+            {label:'Our Researchers',href:'/#team'},{label:'Open Roles',href:'/careers'},
+            {label:'Internships',href:'/careers'},
+          ]},
+        ].map((section,si) => (
+          <div key={section.label} style={{borderBottom:'1px solid rgba(255,255,255,0.06)',paddingBottom:'1.5rem',marginBottom:'1.5rem'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.2em',
+              textTransform:'uppercase',color:'rgba(255,255,255,0.25)',marginBottom:'1rem'}}>{section.label}</div>
+            <div style={{display:'flex',flexDirection:'column',gap:'0'}}>
+              {section.items.map(item => (
+                <a key={item.label} href={item.href} onClick={()=>setMenuOpen(false)} style={{
+                  fontFamily:"'DM Mono',monospace",fontSize:'13px',letterSpacing:'0.08em',
+                  textTransform:'uppercase',color:'rgba(255,255,255,0.7)',textDecoration:'none',
+                  padding:'12px 0',borderBottom:'1px solid rgba(255,255,255,0.04)',
+                  transition:'color .15s',
+                }}
+                  onMouseEnter={e=>e.currentTarget.style.color='#fff'}
+                  onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.7)'}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+        <a href="/#contact" onClick={()=>setMenuOpen(false)} style={{
+          fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.14em',
+          textTransform:'uppercase',color:'#000',background:'#fff',
+          padding:'14px 28px',borderRadius:'3px',textDecoration:'none',
+          textAlign:'center',marginTop:'1rem',
+        }}>Request Access →</a>
+      </div>
         )
       })()}
 
@@ -479,9 +550,12 @@ export default function Home() {
         body { background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
         ::selection { background: rgba(59,130,246,0.25); }
         @keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:.7} }
+        @media(min-width:769px) {
+          .nav-mobile { display:none !important; }
+        }
         @media(max-width:768px) {
-          nav > div { gap:.75rem !important; }
-          nav > div > a:not(:last-child) { display:none; }
+          .nav-desktop { display:none !important; }
+          .nav-items { display:none !important; }
         }
         @media(max-width:960px) {
           footer > div > div { grid-template-columns: 1fr 1fr !important; }
