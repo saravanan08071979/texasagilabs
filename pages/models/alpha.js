@@ -68,7 +68,7 @@ export default function Alpha() {
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
       </Head>
       <SiteNav />
-      <div style={{background:'#0a0f1e',minHeight:'100vh',paddingTop:'64px'}}>
+      <div style={{background:'#0d1b2e',minHeight:'100vh',paddingTop:'64px'}}>
 
         {/* HERO */}
         <div style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',overflow:'hidden',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
@@ -125,7 +125,7 @@ export default function Alpha() {
         {/* SPECS + BENCHMARKS */}
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',background:'rgba(255,255,255,0.06)',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
           {/* Specs */}
-          <div style={{background:'#0a0f1e',padding:'4rem 6vw'}}>
+          <div style={{background:'#0d1b2e',padding:'4rem 6vw'}}>
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:C,marginBottom:'2rem'}}>Specifications</div>
             <div style={{display:'flex',flexDirection:'column',gap:'0px'}}>
               {SPECS.map(s => (
@@ -138,7 +138,7 @@ export default function Alpha() {
           </div>
 
           {/* Benchmarks */}
-          <div style={{background:'#0a0f1e',padding:'4rem 6vw'}}>
+          <div style={{background:'#0d1b2e',padding:'4rem 6vw'}}>
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:C,marginBottom:'2rem'}}>Benchmark Results</div>
             {BENCHMARKS.map(b => <BenchmarkBar key={b.name} b={b} vis={vis} />)}
           </div>
@@ -173,7 +173,7 @@ export default function Alpha() {
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(255,255,255,0.2)',marginBottom:'2rem'}}>Also in the Suite</div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',background:'rgba(255,255,255,0.06)'}}>
               {[{name:'OMEGA',sub:'B1 — Robust Cognition',c:'#8b5cf6',status:'In Evaluation',href:'/models/omega'},{name:'NOVA',sub:'C1 — Agent Integration',c:'#06b6d4',status:'Research Phase',href:'/models/nova'}].map(m=>(
-                <a key={m.name} href={m.href} style={{background:'#0a0f1e',padding:'2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.c}`,transition:'background 0.2s'}}
+                <a key={m.name} href={m.href} style={{background:'#0d1b2e',padding:'2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.c}`,transition:'background 0.2s'}}
                   onMouseEnter={e=>e.currentTarget.style.background='#080c14'}
                   onMouseLeave={e=>e.currentTarget.style.background='#000'}>
                   <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3rem',color:m.c,lineHeight:1,marginBottom:'0.25rem'}}>{m.name}</div>

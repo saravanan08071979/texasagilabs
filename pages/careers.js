@@ -75,7 +75,7 @@ export default function Careers() {
 
       <SiteNav />
 
-      <div style={{background:'#0a0f1e',minHeight:'100vh',paddingTop:'64px'}}>
+      <div style={{background:'#0d1b2e',minHeight:'100vh',paddingTop:'64px'}}>
 
         {/* HERO */}
         <div style={{position:'relative',minHeight:'55vh',display:'flex',alignItems:'flex-end',overflow:'hidden',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
@@ -102,7 +102,7 @@ export default function Careers() {
               {t:'Small & Focused',b:'5 researchers. No bureaucracy. High leverage on every decision.',c:'#10b981'},
               {t:'Competitive Package',b:'Top-of-market comp, equity, unlimited PTO, $5K learning budget.',c:'#f59e0b'},
             ].map(v => (
-              <div key={v.t} style={{padding:'2.5rem 2rem',background:'#0a0f1e'}}>
+              <div key={v.t} style={{padding:'2.5rem 2rem',background:'#0d1b2e'}}>
                 <div style={{width:'4px',height:'24px',background:v.c,marginBottom:'1.5rem',borderRadius:'2px'}} />
                 <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.3rem',letterSpacing:'0.04em',color:'#fff',marginBottom:'0.5rem'}}>{v.t}</h3>
                 <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'0.9rem',color:'rgba(255,255,255,0.35)',lineHeight:1.7}}>{v.b}</p>

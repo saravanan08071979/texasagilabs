@@ -62,7 +62,7 @@ export default function Nova() {
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
       </Head>
       <SiteNav />
-      <div style={{background:'#0a0f1e',minHeight:'100vh',paddingTop:'64px'}}>
+      <div style={{background:'#0d1b2e',minHeight:'100vh',paddingTop:'64px'}}>
 
         {/* HERO */}
         <div style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',overflow:'hidden',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
@@ -117,7 +117,7 @@ export default function Nova() {
 
         {/* SPECS + BENCHMARKS */}
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',background:'rgba(255,255,255,0.06)',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
-          <div style={{background:'#0a0f1e',padding:'4rem 6vw'}}>
+          <div style={{background:'#0d1b2e',padding:'4rem 6vw'}}>
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:C,marginBottom:'2rem'}}>Specifications</div>
             {SPECS.map(s => (
               <div key={s.label} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'1.1rem 0',borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
@@ -126,7 +126,7 @@ export default function Nova() {
               </div>
             ))}
           </div>
-          <div style={{background:'#0a0f1e',padding:'4rem 6vw'}}>
+          <div style={{background:'#0d1b2e',padding:'4rem 6vw'}}>
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:C,marginBottom:'2rem'}}>Benchmark Results</div>
             {BENCHMARKS.map(b => <BenchmarkBar key={b.name} b={b} vis={vis} />)}
             <p style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.2)',marginTop:'1.5rem',lineHeight:1.6}}>Internal research results. Benchmarks evolving as NOVA development continues.</p>
@@ -139,7 +139,7 @@ export default function Nova() {
           <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(2.5rem,5vw,5rem)',lineHeight:0.9,color:'#fff',marginBottom:'3rem'}}>Six-Stage<br/>Safe Pipeline.</h2>
           <div style={{display:'flex',flexDirection:'column',gap:'1px',background:'rgba(255,255,255,0.06)'}}>
             {PIPELINE.map((p,i) => (
-              <div key={p.n} style={{background:'#0a0f1e',padding:'2rem 2.5rem',display:'flex',alignItems:'center',gap:'2rem',transition:'background 0.2s'}}
+              <div key={p.n} style={{background:'#0d1b2e',padding:'2rem 2.5rem',display:'flex',alignItems:'center',gap:'2rem',transition:'background 0.2s'}}
                 onMouseEnter={e=>e.currentTarget.style.background='#080c14'}
                 onMouseLeave={e=>e.currentTarget.style.background='#000'}>
                 <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2.5rem',color:C,opacity:0.2,minWidth:'48px',lineHeight:1}}>{p.n}</div>
@@ -160,7 +160,7 @@ export default function Nova() {
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(255,255,255,0.2)',marginBottom:'2rem'}}>Also in the Suite</div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',background:'rgba(255,255,255,0.06)'}}>
               {[{name:'ALPHA',sub:'A1 — Safe Deployment',c:'#3b82f6',href:'/models/alpha'},{name:'OMEGA',sub:'B1 — Robust Cognition',c:'#8b5cf6',href:'/models/omega'}].map(m=>(
-                <a key={m.name} href={m.href} style={{background:'#0a0f1e',padding:'2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.c}`,transition:'background 0.2s'}}
+                <a key={m.name} href={m.href} style={{background:'#0d1b2e',padding:'2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.c}`,transition:'background 0.2s'}}
                   onMouseEnter={e=>e.currentTarget.style.background='#080c14'}
                   onMouseLeave={e=>e.currentTarget.style.background='#000'}>
                   <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3rem',color:m.c,lineHeight:1,marginBottom:'0.25rem'}}>{m.name}</div>

@@ -210,7 +210,7 @@ export default function Blog() {
 
       <SiteNav />
 
-      <div style={{background:'#0a0f1e',minHeight:'100vh',paddingTop:'64px'}}>
+      <div style={{background:'#0d1b2e',minHeight:'100vh',paddingTop:'64px'}}>
 
         {/* HERO */}
         <div style={{position:'relative',minHeight:'50vh',display:'flex',alignItems:'flex-end',overflow:'hidden',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>

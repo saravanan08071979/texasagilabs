@@ -117,7 +117,7 @@ function CinemaSection({ id, children, style={} }) {
     <section ref={ref} id={id} style={{
       position:'relative', height:'100vh', minHeight:'100vh',
       display:'flex', flexDirection:'column', justifyContent:'flex-end',
-      overflow:'hidden', background:'#0a0f1e', ...style,
+      overflow:'hidden', background:'#0d1b2e', ...style,
     }}>
       {children(vis)}
       <Noise />
@@ -262,7 +262,7 @@ export default function Home() {
           <nav style={{
             position:'fixed',top:0,left:0,right:0,zIndex:1000,
             padding:'0 4vw',height:'60px',display:'flex',alignItems:'center',justifyContent:'space-between',
-            background:scrolled?'rgba(10,15,30,0.95)':'transparent',
+            background:scrolled?'rgba(13,27,46,0.95)':'transparent',
             backdropFilter:scrolled?'blur(20px)':'none',
             borderBottom:scrolled?'1px solid rgba(255,255,255,0.05)':'none',
             transition:'all .5s ease',
@@ -531,7 +531,7 @@ export default function Home() {
       </CinemaSection>
 
       {/* ── FOOTER ── */}
-      <footer style={{background:'#0a0f1e',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'1.5rem 5vw'}}>
+      <footer style={{background:'#0d1b2e',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'1.5rem 5vw'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'1rem'}}>
           <div style={{display:'flex',alignItems:'center',gap:'2.5rem',flexWrap:'wrap'}}>
             {[['Updates','/blog'],['Privacy Policy','/#']].map(([label,href]) => (
@@ -547,7 +547,7 @@ export default function Home() {
       <style jsx global>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body { background: #0a0f1e; color: #fff; -webkit-font-smoothing: antialiased; }
+        body { background: #0d1b2e; color: #fff; -webkit-font-smoothing: antialiased; }
         ::selection { background: rgba(59,130,246,0.25); }
         @keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:.7} }
         @keyframes kenBurns { 0%{transform:scale(1) translate(0,0)} 100%{transform:scale(1.08) translate(-1%,-1%)} }

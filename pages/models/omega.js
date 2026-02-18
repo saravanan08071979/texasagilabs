@@ -53,7 +53,7 @@ export default function Omega() {
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
       </Head>
       <SiteNav />
-      <div style={{background:'#0a0f1e',minHeight:'100vh',paddingTop:'64px'}}>
+      <div style={{background:'#0d1b2e',minHeight:'100vh',paddingTop:'64px'}}>
 
         {/* HERO */}
         <div style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',overflow:'hidden',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
@@ -108,7 +108,7 @@ export default function Omega() {
 
         {/* SPECS + BENCHMARKS */}
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',background:'rgba(255,255,255,0.06)',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
-          <div style={{background:'#0a0f1e',padding:'4rem 6vw'}}>
+          <div style={{background:'#0d1b2e',padding:'4rem 6vw'}}>
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:C,marginBottom:'2rem'}}>Specifications</div>
             {SPECS.map(s => (
               <div key={s.label} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'1.1rem 0',borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
@@ -117,7 +117,7 @@ export default function Omega() {
               </div>
             ))}
           </div>
-          <div style={{background:'#0a0f1e',padding:'4rem 6vw'}}>
+          <div style={{background:'#0d1b2e',padding:'4rem 6vw'}}>
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:C,marginBottom:'2rem'}}>Benchmark Results</div>
             {BENCHMARKS.map(b => <BenchmarkBar key={b.name} b={b} vis={vis} />)}
             <p style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.2)',marginTop:'1.5rem',lineHeight:1.6}}>Preliminary internal results. Final benchmarks pending external review.</p>
@@ -137,7 +137,7 @@ export default function Omega() {
               {t:'Uncertainty Quantification',b:'Produces calibrated confidence estimates, enabling downstream systems to route low-confidence outputs for human review.',c:'#10b981'},
               {t:'Long Context Mastery',b:'256K token context with maintained coherence — critical for long-document reasoning and multi-session planning.',c:C},
             ].map(cap => (
-              <div key={cap.t} style={{background:'#0a0f1e',padding:'2.5rem 2rem'}}>
+              <div key={cap.t} style={{background:'#0d1b2e',padding:'2.5rem 2rem'}}>
                 <div style={{width:'3px',height:'20px',background:cap.c,marginBottom:'1.25rem',borderRadius:'2px'}} />
                 <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.3rem',letterSpacing:'0.04em',color:'#fff',marginBottom:'0.75rem'}}>{cap.t}</h3>
                 <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'0.88rem',color:'rgba(255,255,255,0.35)',lineHeight:1.75}}>{cap.b}</p>
@@ -152,7 +152,7 @@ export default function Omega() {
             <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(255,255,255,0.2)',marginBottom:'2rem'}}>Also in the Suite</div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',background:'rgba(255,255,255,0.06)'}}>
               {[{name:'ALPHA',sub:'A1 — Safe Deployment',c:'#3b82f6',href:'/models/alpha'},{name:'NOVA',sub:'C1 — Agent Integration',c:'#06b6d4',href:'/models/nova'}].map(m=>(
-                <a key={m.name} href={m.href} style={{background:'#0a0f1e',padding:'2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.c}`,transition:'background 0.2s'}}
+                <a key={m.name} href={m.href} style={{background:'#0d1b2e',padding:'2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.c}`,transition:'background 0.2s'}}
                   onMouseEnter={e=>e.currentTarget.style.background='#080c14'}
                   onMouseLeave={e=>e.currentTarget.style.background='#000'}>
                   <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3rem',color:m.c,lineHeight:1,marginBottom:'0.25rem'}}>{m.name}</div>
