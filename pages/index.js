@@ -292,9 +292,6 @@ export default function Home() {
                     cursor:'default',transition:'color .2s',userSelect:'none',
                   }}>
                     {nav.label}
-                    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{opacity:.7,marginTop:'1px'}}>
-                      <path d="M1 1l3 3 3-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                    </svg>
                   </div>
 
                   {/* Dropdown */}
@@ -408,9 +405,27 @@ export default function Home() {
       {/* ── 1. HERO ── */}
       <CinemaSection id="hero">
         {vis => (<>
-          <NeuralCanvas color1="#3b82f6" color2="#8b5cf6" density={90} />
+          {/* Video background — drop hero.mp4 into /public to activate */}
+          <video
+            autoPlay muted loop playsInline
+            poster="/hero-poster.jpg"
+            style={{
+              position:'absolute',inset:0,width:'100%',height:'100%',
+              objectFit:'cover',objectPosition:'center',zIndex:0,
+            }}
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
+          {/* Fallback poster with Ken Burns zoom when no video */}
+          <div style={{
+            position:'absolute',inset:0,zIndex:0,
+            backgroundImage:'url(/hero-poster.jpg)',
+            backgroundSize:'cover',backgroundPosition:'center',
+            animation:'kenBurns 20s ease-in-out infinite alternate',
+          }} />
+          {/* Overlay */}
           <div style={{position:'absolute',inset:0,zIndex:2,
-            background:'linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.25) 100%)'}} />
+            background:'linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.1) 50%, rgba(0,0,0,.3) 100%)'}} />
           <SectionText vis={vis}
             line1="Researching Aligned"
             line2="Intelligence."
@@ -545,6 +560,7 @@ export default function Home() {
         body { background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
         ::selection { background: rgba(59,130,246,0.25); }
         @keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:.7} }
+        @keyframes kenBurns { 0%{transform:scale(1) translate(0,0)} 100%{transform:scale(1.08) translate(-1%,-1%)} }
         @media(min-width:769px) {
           .nav-mobile { display:none !important; }
         }
