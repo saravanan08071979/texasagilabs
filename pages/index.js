@@ -141,6 +141,7 @@ function Section({ id, bg, children, style = {} }) {
       alignItems:'center', overflow:'hidden', background: bg || '#000', ...style,
     }}>
       {children(vis)}
+      <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:10,opacity:0.035,backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",backgroundSize:'180px 180px'}} />
     </section>
   )
 }
@@ -252,6 +253,33 @@ export default function Home() {
         </>)}
       </Section>
 
+
+      {/* TICKER */}
+      <div style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.06)',borderBottom:'1px solid rgba(255,255,255,0.06)',overflow:'hidden',whiteSpace:'nowrap',position:'relative',zIndex:5}}>
+        <div style={{display:'inline-flex',animation:'ticker 30s linear infinite',padding:'0'}}>
+          {[...Array(3)].map((_,idx) => (
+            <div key={idx} style={{display:'inline-flex',alignItems:'center'}}>
+              {[
+                {n:'3',l:'Frontier Models'},
+                {n:'12+',l:'Research Papers'},
+                {n:'5',l:'Safety Researchers'},
+                {n:'100%',l:'Open Research'},
+                {n:'S-2',l:'ALPHA Certified'},
+                {n:'R-1',l:'OMEGA Certified'},
+                {n:'1,240',l:'Benchmark Tasks'},
+                {n:'2026',l:'Founded McKinney TX'},
+              ].map((item,i) => (
+                <div key={i} style={{display:'inline-flex',alignItems:'center',gap:'0.75rem',padding:'0.9rem 3rem'}}>
+                  <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{item.n}</span>
+                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.25)'}}>{item.l}</span>
+                  <span style={{color:'rgba(255,255,255,0.08)',marginLeft:'0.5rem',fontSize:'10px'}}>◆</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* MODELS */}
       <Section id="models" bg="#000">
         {vis => (<>
@@ -288,7 +316,7 @@ export default function Home() {
         {vis => (<>
           <NeuralCanvas color1="#8b5cf6" color2="#06b6d4" density={50} />
           <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 80% at 100% 50%,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.9) 55%)'}} />
-          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6rem',alignItems:'center'}}>
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto',display:'grid',gridTemplateColumns:'1fr',gap:'4rem'}}>
             <div>
               <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(139,92,246,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Research Areas</div>
               <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7.5rem)',lineHeight:0.9,color:'#fff',marginBottom:'2rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Six Hard<br/>Problems.</h2>
@@ -311,10 +339,10 @@ export default function Home() {
                 {n:'05',t:'Evaluation & Red-Teaming',c:'#f59e0b',d:'0.7s'},
                 {n:'06',t:'Constitutional AI Methods',c:'#3b82f6',d:'0.8s'},
               ].map(r => (
-                <div key={r.n} style={{display:'flex',alignItems:'center',gap:'1.5rem',padding:'1.25rem 0',borderBottom:'1px solid rgba(255,255,255,0.06)',opacity:vis?1:0,transform:vis?'translateX(0)':'translateX(30px)',transitionProperty:'opacity,transform',transitionDuration:'0.7s',transitionDelay:r.d}}>
+                <div key={r.n} style={{display:'flex',alignItems:'center',gap:'1rem',padding:'1.5rem',background:'rgba(0,0,0,0.5)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform',transitionDuration:'0.7s',transitionDelay:r.d}}>
                   <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',color:r.c,opacity:0.35,minWidth:'32px'}}>{r.n}</span>
                   <span style={{fontFamily:"'DM Mono',monospace",fontSize:'12px',letterSpacing:'0.05em',color:'rgba(255,255,255,0.75)'}}>{r.t}</span>
-                  <span style={{marginLeft:'auto',color:r.c,opacity:0.4,fontSize:'14px'}}>→</span>
+                  <span style={{marginLeft:'auto',color:r.c,opacity:0.35,fontSize:'12px',flexShrink:0}}>→</span>
                 </div>
               ))}
             </div>
@@ -365,11 +393,11 @@ export default function Home() {
                 {i:'RV',n:'Rosa Vasquez',r:'ML Infrastructure Lead',c:'#f59e0b',bg:'rgba(42,31,10,0.6)',t:'Training · RLHF',d:'0.7s'},
                 {i:'+',n:'Join the Team',r:'Open Positions',c:'#3b82f6',bg:'rgba(59,130,246,0.04)',t:'View Careers →',d:'0.8s',href:'/careers'},
               ].map(m => (
-                <a key={m.n} href={m.href || '/careers'} style={{background:m.bg,padding:'2rem 1.5rem',textDecoration:'none',display:'block',backdropFilter:'blur(8px)',transition:'background 0.3s',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform,background',transitionDuration:'0.7s,0.7s,0.3s',transitionDelay:m.d}}
+                <a key={m.n} href={m.href || '/careers'} style={{background:m.bg,padding:'2.75rem 2rem',textDecoration:'none',display:'block',backdropFilter:'blur(8px)',transition:'background 0.3s',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform,background',transitionDuration:'0.7s,0.7s,0.3s',transitionDelay:m.d}}
                   onMouseEnter={e=>e.currentTarget.style.background='rgba(20,28,45,0.8)'}
                   onMouseLeave={e=>e.currentTarget.style.background=m.bg}>
-                  <div style={{width:'44px',height:'44px',borderRadius:'8px',background:`${m.c}18`,border:`1px solid ${m.c}33`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:m.c,marginBottom:'1rem'}}>{m.i}</div>
-                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',color:'rgba(255,255,255,0.85)',letterSpacing:'0.03em',marginBottom:'0.25rem'}}>{m.n}</div>
+                  <div style={{width:'60px',height:'60px',borderRadius:'10px',background:`${m.c}18`,border:`1px solid ${m.c}33`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.5rem',color:m.c,marginBottom:'1.5rem'}}>{m.i}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'12px',color:'rgba(255,255,255,0.88)',letterSpacing:'0.03em',marginBottom:'0.35rem'}}>{m.n}</div>
                   <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:m.c,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:'0.75rem'}}>{m.r}</div>
                   <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.05em'}}>{m.t}</div>
                 </a>
@@ -482,6 +510,7 @@ export default function Home() {
         html { scroll-behavior: smooth; }
         body { background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
         @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+        @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-33.333%)} }
         @media(max-width:1024px) {
           [style*="grid-template-columns: repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
           [style*="grid-template-columns: repeat(4,1fr)"] { grid-template-columns: 1fr 1fr !important; }
