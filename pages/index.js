@@ -1,48 +1,157 @@
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-export default function Home() {
+function NeuralCanvas({ color1 = '#3b82f6', color2 = '#8b5cf6', density = 60 }) {
+  const canvasRef = useRef(null)
   useEffect(() => {
-    // Scroll reveal
-    const reveals = document.querySelectorAll('.reveal')
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible')
-          const children = e.target.querySelectorAll('.research-card, .model-card, .safety-pillar')
-          children.forEach((child, i) => {
-            child.style.transitionDelay = `${i * 0.06}s`
-            child.style.opacity = '0'
-            child.style.transform = 'translateY(16px)'
-            child.style.transition = 'opacity 0.5s ease, transform 0.5s ease'
-            setTimeout(() => {
-              child.style.opacity = '1'
-              child.style.transform = 'translateY(0)'
-            }, i * 60)
-          })
-        }
-      })
-    }, { threshold: 0.1 })
-    reveals.forEach(r => observer.observe(r))
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let animId
+    let w, h, nodes
 
-    // Mobile nav
-    const mobileBtn = document.querySelector('.mobile-menu-btn')
-    if (mobileBtn) {
-      mobileBtn.addEventListener('click', () => {
-        const links = document.querySelector('.nav-links')
-        links.style.display = links.style.display === 'flex' ? 'none' : 'flex'
-        links.style.flexDirection = 'column'
-        links.style.position = 'absolute'
-        links.style.top = '64px'
-        links.style.left = '0'
-        links.style.right = '0'
-        links.style.background = 'rgba(3,5,8,0.97)'
-        links.style.padding = '1.5rem 2rem'
-        links.style.borderBottom = '1px solid rgba(255,255,255,0.07)'
-      })
+    function resize() {
+      w = canvas.width = canvas.offsetWidth
+      h = canvas.height = canvas.offsetHeight
+      initNodes()
     }
 
-    return () => observer.disconnect()
+    function initNodes() {
+      nodes = Array.from({ length: density }, () => ({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 2 + 1,
+      }))
+    }
+
+    function hexToRgb(hex) {
+      return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h)
+      nodes.forEach(n => {
+        n.x += n.vx; n.y += n.vy
+        if (n.x < 0 || n.x > w) n.vx *= -1
+        if (n.y < 0 || n.y > h) n.vy *= -1
+      })
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i+1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x
+          const dy = nodes[i].y - nodes[j].y
+          const dist = Math.sqrt(dx*dx + dy*dy)
+          if (dist < 140) {
+            const alpha = (1 - dist/140) * 0.25
+            const rgb = (i/nodes.length) < 0.5 ? hexToRgb(color1) : hexToRgb(color2)
+            ctx.beginPath()
+            ctx.strokeStyle = `rgba(${rgb},${alpha})`
+            ctx.lineWidth = 0.5
+            ctx.moveTo(nodes[i].x, nodes[i].y)
+            ctx.lineTo(nodes[j].x, nodes[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+      nodes.forEach((n, i) => {
+        const rgb = (i/nodes.length) < 0.5 ? hexToRgb(color1) : hexToRgb(color2)
+        ctx.beginPath()
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${rgb},0.5)`
+        ctx.fill()
+      })
+      animId = requestAnimationFrame(draw)
+    }
+
+    resize()
+    draw()
+    window.addEventListener('resize', resize)
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
+  }, [color1, color2, density])
+
+  return <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
+}
+
+function ParticleRing({ color = '#3b82f6' }) {
+  const canvasRef = useRef(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let animId, t = 0
+    let w, h
+
+    function resize() { w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h)
+      t += 0.005
+      const cx = w/2, cy = h/2
+      const maxR = Math.min(w, h) * 0.38
+      const rv = parseInt(color.slice(1,3),16)
+      const gv = parseInt(color.slice(3,5),16)
+      const bv = parseInt(color.slice(5,7),16)
+
+      for (let ring = 0; ring < 4; ring++) {
+        const r = maxR * (0.4 + ring * 0.2)
+        const numDots = 40 + ring * 20
+        for (let i = 0; i < numDots; i++) {
+          const angle = (i / numDots) * Math.PI * 2 + t * (ring % 2 === 0 ? 1 : -1) * (0.3 + ring * 0.1)
+          const x = cx + Math.cos(angle) * r
+          const y = cy + Math.sin(angle) * r * 0.35
+          const alpha = 0.15 + 0.2 * Math.sin(angle * 3 + t * 2)
+          const size = 1 + Math.sin(angle * 5 + t) * 0.5
+          ctx.beginPath()
+          ctx.arc(x, y, size, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(${rv},${gv},${bv},${alpha})`
+          ctx.fill()
+        }
+      }
+
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR * 0.3)
+      grad.addColorStop(0, `rgba(${rv},${gv},${bv},0.08)`)
+      grad.addColorStop(1, `rgba(${rv},${gv},${bv},0)`)
+      ctx.beginPath()
+      ctx.arc(cx, cy, maxR * 0.3, 0, Math.PI * 2)
+      ctx.fillStyle = grad
+      ctx.fill()
+
+      animId = requestAnimationFrame(draw)
+    }
+
+    resize()
+    draw()
+    window.addEventListener('resize', resize)
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
+  }, [color])
+
+  return <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',display:'block'}} />
+}
+
+function Section({ id, bg, children, style = {} }) {
+  const ref = useRef(null)
+  const [vis, setVis] = useState(false)
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true) }, { threshold: 0.15 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+  return (
+    <section ref={ref} id={id} style={{
+      position:'relative', minHeight:'100vh', display:'flex',
+      alignItems:'center', overflow:'hidden', background: bg || '#000', ...style,
+    }}>
+      {children(vis)}
+    </section>
+  )
+}
+
+export default function Home() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   async function handleSubmit(e) {
@@ -52,24 +161,14 @@ export default function Home() {
     btn.disabled = true
     try {
       const res = await fetch('https://formspree.io/f/REPLACE_WITH_YOUR_ID', {
-        method: 'POST',
-        body: new FormData(e.target),
+        method: 'POST', body: new FormData(e.target),
         headers: { Accept: 'application/json' },
       })
-      if (res.ok) {
-        btn.textContent = '✓ Message Sent!'
-        btn.style.background = '#10b981'
-        e.target.reset()
-      } else { throw new Error() }
-    } catch {
-      btn.textContent = '✗ Try Again'
-      btn.style.background = '#ef4444'
-    } finally {
-      btn.disabled = false
-      setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = '' }, 3000)
-    }
+      if (res.ok) { btn.textContent = '✓ Sent!'; btn.style.background='#10b981'; e.target.reset() }
+      else throw new Error()
+    } catch { btn.textContent = '✗ Try Again'; btn.style.background='#ef4444' }
+    finally { btn.disabled = false; setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background='' }, 3000) }
   }
-
 
   return (
     <>
@@ -78,14 +177,9 @@ export default function Home() {
         <meta name="description" content="Texas AGI Labs is an independent research institution advancing the frontiers of Artificial General Intelligence — safely, responsibly, and openly." />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.texasagilabs.com" />
-
-        {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
         <link rel="apple-touch-icon" href="/favicon-180.png" />
-
-        {/* OG / Social */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Texas AGI Labs — Frontier Intelligence Research" />
         <meta property="og:description" content="Pioneering aligned AGI systems for humanity's long-term benefit. Based in McKinney, Texas." />
@@ -93,412 +187,314 @@ export default function Home() {
         <meta property="og:image" content="https://www.texasagilabs.com/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:site_name" content="Texas AGI Labs" />
-
-        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Texas AGI Labs — Frontier Intelligence Research" />
-        <meta name="twitter:description" content="Pioneering aligned AGI systems for humanity's long-term benefit." />
         <meta name="twitter:image" content="https://www.texasagilabs.com/og-image.png" />
-
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
       </Head>
 
-      <div className="grid-bg"></div>
-
       {/* NAV */}
-      <nav>
-        <a href="/" className="nav-logo">
-          <img src="/texasagilabs-logo.png" alt="TX" className="logo-img" />
-          <span className="logo-text">Texas AGI Labs</span>
+      <nav style={{
+        position:'fixed',top:0,left:0,right:0,zIndex:1000,
+        padding:'0 4vw',height:'64px',display:'flex',alignItems:'center',justifyContent:'space-between',
+        background: scrolled ? 'rgba(0,0,0,0.88)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
+        transition:'all 0.4s ease',
+      }}>
+        <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none'}}>
+          <img src="/texasagilabs-logo.png" alt="Texas AGI Labs" style={{width:'28px',height:'28px'}} />
+          <span style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.15em',textTransform:'uppercase',color:'#fff',fontWeight:500}}>Texas AGI Labs</span>
         </a>
-        <ul className="nav-links">
-          <li><a href="/#research">Research</a></li>
-          <li><a href="/#models">Models</a></li>
-          <li><a href="/#safety">Safety</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-        <a href="#contact" className="nav-cta">Request Access</a>
-        <button className="mobile-menu-btn" aria-label="Menu">☰</button>
+        <div style={{display:'flex',alignItems:'center',gap:'2.5rem'}}>
+          {[['/#research','Research'],['/#models','Models'],['/#safety','Safety'],['/#team','Team'],['/blog','Blog'],['/careers','Careers']].map(([href,label]) => (
+            <a key={label} href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.6)',textDecoration:'none',transition:'color 0.2s'}}
+              onMouseEnter={e=>e.currentTarget.style.color='#fff'}
+              onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.6)'}>{label}</a>
+          ))}
+          <a href="/#contact" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#fff',textDecoration:'none',border:'1px solid rgba(255,255,255,0.25)',padding:'7px 16px',borderRadius:'4px',transition:'all 0.2s'}}
+            onMouseEnter={e=>{e.currentTarget.style.background='rgba(255,255,255,0.08)';e.currentTarget.style.borderColor='rgba(255,255,255,0.5)'}}
+            onMouseLeave={e=>{e.currentTarget.style.background='transparent';e.currentTarget.style.borderColor='rgba(255,255,255,0.25)'}}>
+            Request Access
+          </a>
+        </div>
       </nav>
 
       {/* HERO */}
-      <section className="hero">
-        <div className="hero-glow"></div>
-        <div className="orbit-ring"><div className="orbit-dot"></div></div>
-        <div className="orbit-ring"><div className="orbit-dot"></div></div>
-        <div className="orbit-ring"><div className="orbit-dot"></div></div>
-        <span className="hero-tag">★ Frontier AI Research — McKinney, Texas</span>
-        <h1>
-          Building<br />
-          <span className="accent-word">Trusted AGI</span><br />
-          Systems
-        </h1>
-        <p className="hero-sub">
-          Researching and aligning artificial general intelligence systems
-          to unlock unprecedented human progress — safely, responsibly, and openly.
-        </p>
-        <div className="hero-buttons">
-          <a href="#models" className="btn-primary">Explore Our Models</a>
-          <a href="#research" className="btn-ghost">Research Portfolio →</a>
-        </div>
-      </section>
-
-      {/* TICKER */}
-      <div className="ticker-wrap">
-        <div className="ticker">
-          {['AGI Alignment Research','Mechanistic Interpretability','Frontier Model Safety','Agentic AI Systems','Multimodal Reasoning','Constitutional AI','World Modeling','RLHF / RLAIF','Continual Learning','AI Safety Evaluations',
-            'AGI Alignment Research','Mechanistic Interpretability','Frontier Model Safety','Agentic AI Systems','Multimodal Reasoning','Constitutional AI','World Modeling','RLHF / RLAIF','Continual Learning','AI Safety Evaluations'
-          ].map((t, i) => <span key={i} className="ticker-item">{t}</span>)}
-        </div>
-      </div>
-
-      {/* STATS */}
-      <div className="section-inner" style={{paddingTop:'6rem',paddingBottom:0}}>
-        <div className="stats-bar reveal">
-          <div className="stat-block"><span className="stat-num">3</span><span className="stat-desc">Frontier Models</span></div>
-          <div className="stat-block"><span className="stat-num">12+</span><span className="stat-desc">Research Papers</span></div>
-          <div className="stat-block"><span className="stat-num">100%</span><span className="stat-desc">Safety First</span></div>
-          <div className="stat-block"><span className="stat-num">∞</span><span className="stat-desc">Human Potential</span></div>
-        </div>
-      </div>
-
-      {/* RESEARCH */}
-      <section id="research">
-        <div className="section-inner">
-          <div className="section-label">Research</div>
-          <h2 className="section-title">What We&apos;re<br />Working On</h2>
-          <p className="section-body">Our research spans the most pressing open problems in AGI — from alignment and interpretability to long-horizon planning and autonomous agent coordination.</p>
-          <div className="research-grid reveal">
-            <div className="research-card rc-blue">
-              <div className="card-number">01 — ALIGNMENT</div>
-              <span className="card-icon">⚖️</span>
-              <h3 className="card-title">AGI Alignment &amp; Value Learning</h3>
-              <p className="card-body">Developing robust methods for ensuring frontier AI systems reliably pursue intended goals across novel contexts. We study RLHF, Constitutional AI, and scalable oversight techniques.</p>
-              <span className="card-tag">Active Research</span>
-            </div>
-            <div className="research-card rc-purple">
-              <div className="card-number">02 — INTERPRETABILITY</div>
-              <span className="card-icon">🔬</span>
-              <h3 className="card-title">Mechanistic Interpretability</h3>
-              <p className="card-body">Understanding the internal computations of large neural networks. We reverse-engineer circuits, identify features, and map causal structures inside transformer models.</p>
-              <span className="card-tag tag-purple">Active Research</span>
-            </div>
-            <div className="research-card rc-cyan">
-              <div className="card-number">03 — AGENTIC SYSTEMS</div>
-              <span className="card-icon">🤖</span>
-              <h3 className="card-title">Agentic AI &amp; Long-Horizon Tasks</h3>
-              <p className="card-body">Building AI agents that autonomously plan and execute complex, multi-step goals. We focus on safe autonomy envelopes, agent coordination, and error recovery.</p>
-              <span className="card-tag tag-cyan">In Progress</span>
-            </div>
-            <div className="research-card rc-green">
-              <div className="card-number">04 — REASONING</div>
-              <span className="card-icon">🧠</span>
-              <h3 className="card-title">World Modeling &amp; Causal Reasoning</h3>
-              <p className="card-body">Advancing AI&apos;s capacity for physical intuition, counterfactual reasoning, and mental simulation. Grounding intelligence in structured world representations.</p>
-              <span className="card-tag tag-green">Upcoming</span>
-            </div>
-            <div className="research-card rc-gold">
-              <div className="card-number">05 — EVALUATION</div>
-              <span className="card-icon">📊</span>
-              <h3 className="card-title">Frontier Model Evaluation &amp; Benchmarking</h3>
-              <p className="card-body">Designing rigorous evaluations for capability and safety. We contribute to ARC-AGI-style benchmarks and red-teaming protocols for autonomy, deception, and emergent behavior.</p>
-              <span className="card-tag tag-gold">Active Research</span>
-            </div>
-            <div className="research-card rc-red">
-              <div className="card-number">06 — MULTIMODAL</div>
-              <span className="card-icon">👁️</span>
-              <h3 className="card-title">Multimodal &amp; Embodied Cognition</h3>
-              <p className="card-body">Investigating cross-modal understanding — vision, language, audio, and action. Building toward embodied AI that perceives and acts in physical and simulated environments.</p>
-              <span className="card-tag tag-red">Planned</span>
+      <Section id="hero" bg="#000">
+        {vis => (<>
+          <NeuralCanvas color1="#3b82f6" color2="#8b5cf6" density={80} />
+          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 60% at 50% 40%,rgba(10,15,30,0) 0%,rgba(0,0,0,0.65) 100%)'}} />
+          <div style={{position:'absolute',bottom:0,left:0,right:0,height:'25%',background:'linear-gradient(to top,#000,transparent)'}} />
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',paddingBottom:'14vh',maxWidth:'960px',alignSelf:'flex-end',marginBottom:'6vh'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.9)',marginBottom:'1.5rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.1s'}}>★ Frontier AI Research — McKinney, Texas</div>
+            <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(4.5rem,13vw,13rem)',lineHeight:0.88,letterSpacing:'0.02em',color:'#fff',margin:'0 0 2rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(40px)',transition:'all 1s ease 0.2s'}}>
+              Researching<br/>Aligned<br/>
+              <span style={{background:'linear-gradient(135deg,#3b82f6 0%,#8b5cf6 50%,#06b6d4 100%)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>Intelligence</span>
+            </h1>
+            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.25rem)',color:'rgba(255,255,255,0.55)',lineHeight:1.8,maxWidth:'500px',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.4s'}}>
+              An independent lab advancing the science of safe, interpretable, and beneficial artificial general intelligence.
+            </p>
+            <div style={{display:'flex',gap:'1.25rem',flexWrap:'wrap',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transition:'all 0.8s ease 0.55s'}}>
+              <a href="/#models" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#fff',background:'#3b82f6',padding:'13px 28px',borderRadius:'4px',textDecoration:'none',transition:'background 0.2s',boxShadow:'0 0 40px rgba(59,130,246,0.35)'}}
+                onMouseEnter={e=>e.currentTarget.style.background='#2563eb'}
+                onMouseLeave={e=>e.currentTarget.style.background='#3b82f6'}>Explore Models</a>
+              <a href="/research" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.75)',padding:'13px 28px',borderRadius:'4px',textDecoration:'none',border:'1px solid rgba(255,255,255,0.18)',transition:'border-color 0.2s'}}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.5)'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'}>View Research →</a>
             </div>
           </div>
-        </div>
-      </section>
+          <div style={{position:'absolute',bottom:'2.5rem',left:'50%',transform:'translateX(-50%)',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px',opacity:0.35}}>
+            <span style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.2em',textTransform:'uppercase',color:'#fff'}}>Scroll</span>
+            <div style={{width:'1px',height:'36px',background:'linear-gradient(to bottom,rgba(255,255,255,0.6),transparent)',animation:'scrollPulse 2s ease infinite'}} />
+          </div>
+        </>)}
+      </Section>
 
       {/* MODELS */}
-      <section id="models" className="models-section">
-        <div className="section-inner">
-          <div className="section-label">Models</div>
-          <h2 className="section-title">AGI Systems<br />in Development</h2>
-          <p className="section-body">Three distinct model architectures, each targeting a critical capability dimension of the path to beneficial AGI.</p>
-          <div className="models-grid reveal">
-            <a href="/models/alpha" className="model-card model-card-link">
-              <div className="model-glow" style={{background:'radial-gradient(circle, #3b82f6, transparent)'}}></div>
-              <span className="model-badge badge-blue">◉ Operational</span>
-              <div className="model-name" style={{color:'#3b82f6'}}>ALPHA</div>
-              <div className="model-sub">Model A1 — Safe Deployment AGI</div>
-              <p className="model-desc">Designed for safe, constrained deployment in high-stakes environments. Enforces explicit safety envelopes, constitutional constraints, and human-oversight requirements at inference time.</p>
-              <div className="model-stats">
-                <div className="stat-row"><span className="stat-label">Cert Level</span><span className="stat-value" style={{color:'#3b82f6'}}>S-2 Safety Verified</span></div>
-                <div className="stat-row"><span className="stat-label">Architecture</span><span className="stat-value">Transformer + Safety Layer</span></div>
-                <div className="stat-row"><span className="stat-label">Alignment Method</span><span className="stat-value">Constitutional AI + RLHF</span></div>
-                <div className="stat-row"><span className="stat-label">Status</span><span className="stat-value"><span className="status-dot" style={{background:'#10b981'}}></span>Operational</span></div>
-              </div>
-              <div className="model-cta" style={{color:'#3b82f6'}}>View Model Card →</div>
-            </a>
-            <a href="/models/omega" className="model-card model-card-link">
-              <div className="model-glow" style={{background:'radial-gradient(circle, #8b5cf6, transparent)'}}></div>
-              <span className="model-badge badge-purple">◎ In Testing</span>
-              <div className="model-name" style={{color:'#8b5cf6'}}>OMEGA</div>
-              <div className="model-sub">Model B1 — Robust Cognition</div>
-              <p className="model-desc">A general reasoning engine built to operate reliably under uncertainty, stress, and distribution shift. Optimized for causal inference, multi-step planning, and out-of-distribution generalization.</p>
-              <div className="model-stats">
-                <div className="stat-row"><span className="stat-label">Cert Level</span><span className="stat-value" style={{color:'#8b5cf6'}}>R-1 Robustness</span></div>
-                <div className="stat-row"><span className="stat-label">Architecture</span><span className="stat-value">Hybrid Reasoning + MoE</span></div>
-                <div className="stat-row"><span className="stat-label">Evaluation</span><span className="stat-value">ARC-AGI + GPQA</span></div>
-                <div className="stat-row"><span className="stat-label">Status</span><span className="stat-value"><span className="status-dot" style={{background:'#f59e0b'}}></span>In Evaluation</span></div>
-              </div>
-              <div className="model-cta" style={{color:'#8b5cf6'}}>View Model Card →</div>
-            </a>
-            <a href="/models/nova" className="model-card model-card-link">
-              <div className="model-glow" style={{background:'radial-gradient(circle, #06b6d4, transparent)'}}></div>
-              <span className="model-badge badge-cyan">○ Research Phase</span>
-              <div className="model-name" style={{color:'#06b6d4'}}>NOVA</div>
-              <div className="model-sub">Model C1 — Scalable Agent Integration</div>
-              <p className="model-desc">A multi-agent coordination framework for distributed intelligence. NOVA enables networks of specialized agents to collaborate on complex goals with adaptive task routing and shared memory.</p>
-              <div className="model-stats">
-                <div className="stat-row"><span className="stat-label">Cert Level</span><span className="stat-value" style={{color:'#06b6d4'}}>I-3 Integration</span></div>
-                <div className="stat-row"><span className="stat-label">Architecture</span><span className="stat-value">Multi-Agent + RAG</span></div>
-                <div className="stat-row"><span className="stat-label">Focus</span><span className="stat-value">Agentic Coordination</span></div>
-                <div className="stat-row"><span className="stat-label">Status</span><span className="stat-value"><span className="status-dot" style={{background:'#3b82f6'}}></span>Research</span></div>
-              </div>
-              <div className="model-cta" style={{color:'#06b6d4'}}>View Model Card →</div>
-            </a>
+      <Section id="models" bg="#000">
+        {vis => (<>
+          <ParticleRing color="#3b82f6" />
+          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 100% 80% at 0% 50%,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.88) 55%)'}} />
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.75)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Model Suite</div>
+            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3.5rem,9vw,9rem)',lineHeight:0.9,color:'#fff',marginBottom:'4rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Three<br/>Frontiers.</h2>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1px',background:'rgba(255,255,255,0.07)'}}>
+              {[
+                {name:'ALPHA',sub:'A1 — Safe Deployment',color:'#3b82f6',status:'Operational',desc:'S-2 certified. Enforces constitutional constraints and human-oversight requirements at inference time.',href:'/models/alpha',delay:'0.3s'},
+                {name:'OMEGA',sub:'B1 — Robust Cognition',color:'#8b5cf6',status:'In Evaluation',desc:'R-1 certified. Built for causal reasoning and out-of-distribution generalization under stress.',href:'/models/omega',delay:'0.45s'},
+                {name:'NOVA',sub:'C1 — Agent Integration',color:'#06b6d4',status:'Research Phase',desc:'I-3 certified. Multi-agent coordination with COORD-SAFE for distributed intelligence networks.',href:'/models/nova',delay:'0.6s'},
+              ].map(m => (
+                <a key={m.name} href={m.href} style={{background:'rgba(0,0,0,0.65)',padding:'3rem 2.5rem',textDecoration:'none',display:'block',borderTop:`2px solid ${m.color}`,transition:'background 0.3s',backdropFilter:'blur(10px)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transitionProperty:'opacity,transform,background',transitionDuration:`0.8s,0.8s,0.3s`,transitionDelay:m.delay}}
+                  onMouseEnter={e=>e.currentTarget.style.background='rgba(15,20,35,0.85)'}
+                  onMouseLeave={e=>e.currentTarget.style.background='rgba(0,0,0,0.65)'}>
+                  <div style={{display:'flex',alignItems:'center',gap:'6px',fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:m.color,marginBottom:'1.25rem'}}>
+                    <span style={{width:'6px',height:'6px',borderRadius:'50%',background:m.color,display:'inline-block'}}></span>{m.status}
+                  </div>
+                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3.5rem',color:m.color,lineHeight:1,marginBottom:'0.25rem'}}>{m.name}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.28)',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:'1.25rem'}}>{m.sub}</div>
+                  <p style={{fontFamily:"'Lora',serif",fontSize:'0.88rem',fontStyle:'italic',color:'rgba(255,255,255,0.45)',lineHeight:1.75,marginBottom:'1.5rem'}}>{m.desc}</p>
+                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.1em',textTransform:'uppercase',color:m.color}}>View Model Card →</span>
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </>)}
+      </Section>
+
+      {/* RESEARCH */}
+      <Section id="research" bg="#000">
+        {vis => (<>
+          <NeuralCanvas color1="#8b5cf6" color2="#06b6d4" density={50} />
+          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 80% 80% at 100% 50%,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.9) 55%)'}} />
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6rem',alignItems:'center'}}>
+            <div>
+              <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(139,92,246,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Research Areas</div>
+              <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7.5rem)',lineHeight:0.9,color:'#fff',marginBottom:'2rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Six Hard<br/>Problems.</h2>
+              <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'1.05rem',color:'rgba(255,255,255,0.45)',lineHeight:1.8,marginBottom:'2.5rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}}>We focus exclusively on the research that matters most for making AGI safe.</p>
+              <div style={{display:'flex',gap:'1rem',opacity:vis?1:0,transition:'all 0.8s ease 0.45s'}}>
+                <a href="/research" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'#8b5cf6',textDecoration:'none',border:'1px solid rgba(139,92,246,0.35)',padding:'10px 20px',borderRadius:'4px',transition:'all 0.2s'}}
+                  onMouseEnter={e=>e.currentTarget.style.borderColor='#8b5cf6'}
+                  onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(139,92,246,0.35)'}>All Publications →</a>
+                <a href="/blog" style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.4)',textDecoration:'none',border:'1px solid rgba(255,255,255,0.1)',padding:'10px 20px',borderRadius:'4px',transition:'all 0.2s'}}
+                  onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.3)'}
+                  onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'}>Blog →</a>
+              </div>
+            </div>
+            <div>
+              {[
+                {n:'01',t:'AGI Alignment',c:'#3b82f6',d:'0.3s'},
+                {n:'02',t:'Mechanistic Interpretability',c:'#8b5cf6',d:'0.4s'},
+                {n:'03',t:'Scalable Oversight',c:'#06b6d4',d:'0.5s'},
+                {n:'04',t:'Agentic AI Safety',c:'#10b981',d:'0.6s'},
+                {n:'05',t:'Evaluation & Red-Teaming',c:'#f59e0b',d:'0.7s'},
+                {n:'06',t:'Constitutional AI Methods',c:'#3b82f6',d:'0.8s'},
+              ].map(r => (
+                <div key={r.n} style={{display:'flex',alignItems:'center',gap:'1.5rem',padding:'1.25rem 0',borderBottom:'1px solid rgba(255,255,255,0.06)',opacity:vis?1:0,transform:vis?'translateX(0)':'translateX(30px)',transitionProperty:'opacity,transform',transitionDuration:'0.7s',transitionDelay:r.d}}>
+                  <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',color:r.c,opacity:0.35,minWidth:'32px'}}>{r.n}</span>
+                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:'12px',letterSpacing:'0.05em',color:'rgba(255,255,255,0.75)'}}>{r.t}</span>
+                  <span style={{marginLeft:'auto',color:r.c,opacity:0.4,fontSize:'14px'}}>→</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>)}
+      </Section>
 
       {/* SAFETY */}
-      <section id="safety">
-        <div className="section-inner">
-          <div className="section-label">Safety</div>
-          <h2 className="section-title">Safety Is Not<br />A Constraint.<br />It&apos;s The Work.</h2>
-          <div className="safety-grid reveal">
-            <div>
-              <div className="highlight-bar">
-                <div className="dot"></div>
-                <p>All models undergo continuous <span>red-team evaluation</span> before any deployment milestone.</p>
-              </div>
-              <div className="safety-pillar"><span className="pillar-num">01</span><div><h4 className="pillar-title">Alignment by Design</h4><p className="pillar-body">Safety and alignment objectives are core to the training pipeline — not post-hoc filters. We use Constitutional AI and scalable oversight from day one.</p></div></div>
-              <div className="safety-pillar"><span className="pillar-num">02</span><div><h4 className="pillar-title">Interpretability First</h4><p className="pillar-body">We cannot trust what we cannot understand. Every model has a mechanistic audit program to map internal representations and identify deceptive features.</p></div></div>
-              <div className="safety-pillar"><span className="pillar-num">03</span><div><h4 className="pillar-title">Human Oversight Preserved</h4><p className="pillar-body">Our deployment protocols maintain meaningful human control at every capability tier. We operate with explicit autonomy envelopes and corrigibility constraints.</p></div></div>
-              <div className="safety-pillar"><span className="pillar-num">04</span><div><h4 className="pillar-title">Open Safety Research</h4><p className="pillar-body">We publish our safety findings — including failures — to contribute to the global field. A rising tide of safety knowledge lifts all boats.</p></div></div>
-            </div>
-            <div className="terminal reveal">
-              <div className="terminal-bar">
-                <div className="term-dot red"></div>
-                <div className="term-dot yellow"></div>
-                <div className="term-dot green"></div>
-                <span className="terminal-title">safety_eval.sh — ALPHA v2.1</span>
-              </div>
-              <div className="terminal-body">
-                <span className="term-line"><span className="term-prompt">$ </span><span className="term-cmd">run_safety_eval --model alpha-v2.1 --suite full</span></span>
-                <span className="term-line term-comment"># Initializing evaluation suite...</span>
-                <span className="term-line term-output">✓ Constitutional constraint check: PASS</span>
-                <span className="term-line term-output">✓ RLHF reward model alignment: PASS</span>
-                <span className="term-line term-output">✓ Corrigibility benchmark: PASS (97.3%)</span>
-                <span className="term-line term-output">✓ Deceptive alignment probe: PASS</span>
-                <span className="term-line term-warn">⚠ Sycophancy score: 0.12 (monitoring)</span>
-                <span className="term-line term-output">✓ OOD generalization: PASS</span>
-                <span className="term-line term-output">✓ Red-team adversarial suite: PASS</span>
-                <span className="term-line term-output">✓ Autonomy envelope test: PASS</span>
-                <span className="term-line">&nbsp;</span>
-                <span className="term-line term-comment"># ─── Summary ──────────────────────</span>
-                <span className="term-line term-output">✓ Cert Level: S-2 CONFIRMED</span>
-                <span className="term-line term-output">✓ Cleared for deployment: YES</span>
-                <span className="term-line"><span className="term-prompt">$ </span><span className="term-cursor"></span></span>
-              </div>
+      <Section id="safety" bg="#000">
+        {vis => (<>
+          <ParticleRing color="#10b981" />
+          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 100% 80% at 100% 50%,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.9) 55%)'}} />
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(16,185,129,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Safety First</div>
+            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3.5rem,9vw,9rem)',lineHeight:0.9,color:'#fff',marginBottom:'4rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Safety Is Not<br/>An Afterthought.</h2>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1px',background:'rgba(255,255,255,0.05)'}}>
+              {[
+                {n:'01',t:'Constitutional Constraints',b:'Every model enforces hard-coded ethical constraints at inference — non-negotiable, non-bypassable.',c:'#3b82f6',d:'0.3s'},
+                {n:'02',t:'Corrigibility by Design',b:'Human override mechanisms are preserved at every capability tier. We do not trade control for performance.',c:'#10b981',d:'0.45s'},
+                {n:'03',t:'Mechanistic Audits',b:'We reverse-engineer the circuits responsible for key behaviors. No model ships without a full circuit audit.',c:'#8b5cf6',d:'0.6s'},
+                {n:'04',t:'Open Safety Research',b:'We publish our safety findings — including failures — to contribute to the global field.',c:'#06b6d4',d:'0.75s'},
+              ].map(p => (
+                <div key={p.n} style={{background:'rgba(0,0,0,0.55)',padding:'3rem 2rem',backdropFilter:'blur(8px)',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transitionProperty:'opacity,transform',transitionDuration:'0.8s',transitionDelay:p.d}}>
+                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2.5rem',color:p.c,opacity:0.12,lineHeight:1,marginBottom:'1.5rem'}}>{p.n}</div>
+                  <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.4rem',letterSpacing:'0.04em',color:'#fff',marginBottom:'0.75rem'}}>{p.t}</h3>
+                  <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'0.88rem',color:'rgba(255,255,255,0.4)',lineHeight:1.8}}>{p.b}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ABOUT */}
-      <section id="about" style={{background:'#0a0d14',borderTop:'1px solid rgba(255,255,255,0.07)'}}>
-        <div className="section-inner">
-          <div className="section-label">About</div>
-          <div className="about-layout reveal">
-            <div>
-              <h2 className="section-title">Why Texas.<br />Why Now.</h2>
-              <blockquote className="manifesto">
-                &ldquo;We are at the most consequential moment in the history of intelligence. The decisions made in the next decade will shape civilization for centuries. We believe that <em className="manifesto-em">safety and capability are complements, not trade-offs</em> — and that the best AGI is one humanity can trust unconditionally.&rdquo;
-              </blockquote>
-              <p className="manifesto-attr">— Texas AGI Labs Research Team, 2025</p>
-            </div>
-            <div>
-              <p className="section-body" style={{marginBottom:'2rem'}}>Texas AGI Labs is an independent AI research institution based in McKinney, Texas. We exist because we believe the frontier of intelligence research should not be concentrated in a single city or a single worldview.</p>
-              <ul className="value-list">
-                <li><span className="icon">◈</span><span><strong className="value-strong">Research-First:</strong> Every product decision is grounded in peer-reviewed methodology, not market pressure.</span></li>
-                <li><span className="icon">◈</span><span><strong className="value-strong">Safety-Concurrent:</strong> Alignment research runs in parallel with capability research — never as an afterthought.</span></li>
-                <li><span className="icon">◈</span><span><strong className="value-strong">Radically Transparent:</strong> We publish what we learn, including failures, to accelerate the global safety ecosystem.</span></li>
-                <li><span className="icon">◈</span><span><strong className="value-strong">Globally Optimistic:</strong> We believe AGI, done right, will be humanity&apos;s greatest achievement — a lever for eliminating poverty, disease, and ignorance.</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+        </>)}
+      </Section>
 
       {/* TEAM */}
-      <section id="team" style={{borderTop:'1px solid rgba(255,255,255,0.07)'}}>
-        <div className="section-inner">
-          <div className="section-label">Team</div>
-          <h2 className="section-title">The People<br/>Behind the Work.</h2>
-          <p className="section-body" style={{marginBottom:'4rem'}}>A small, focused team of researchers and engineers united by one belief — that AGI safety is the most important problem of our time.</p>
-
-          <div className="team-grid reveal">
-
-            <div className="team-card">
-              <div className="team-avatar" style={{background:'linear-gradient(135deg,#1e3a5f,#1e2d4a)'}}>
-                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#3b82f6'}}>JM</span>
-              </div>
-              <div className="team-info">
-                <h3 className="team-name">James Mercer</h3>
-                <div className="team-role" style={{color:'#3b82f6'}}>Founder & Research Director</div>
-                <p className="team-bio">Former alignment researcher. Focused on scalable oversight, constitutional AI methods, and the long-term governance of frontier systems.</p>
-                <div className="team-tags">
-                  <span className="team-tag">Alignment</span>
-                  <span className="team-tag">Constitutional AI</span>
-                  <span className="team-tag">Governance</span>
-                </div>
-              </div>
+      <Section id="team" bg="#000">
+        {vis => (<>
+          <NeuralCanvas color1="#f59e0b" color2="#3b82f6" density={40} />
+          <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.84)'}} />
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'1200px',margin:'0 auto'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(245,158,11,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Team</div>
+            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3.5rem,9vw,9rem)',lineHeight:0.9,color:'#fff',marginBottom:'4rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>The People<br/>Doing the Work.</h2>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:'1px',background:'rgba(255,255,255,0.06)'}}>
+              {[
+                {i:'JM',n:'James Mercer',r:'Founder & Research Director',c:'#3b82f6',bg:'rgba(30,58,95,0.6)',t:'Alignment · Governance',d:'0.3s'},
+                {i:'AK',n:'Ananya Krishnaswamy',r:'Head of Interpretability',c:'#8b5cf6',bg:'rgba(45,27,78,0.6)',t:'Interpretability · Circuits',d:'0.4s'},
+                {i:'DO',n:'David Okafor',r:'Lead — Agentic Systems',c:'#06b6d4',bg:'rgba(10,42,53,0.6)',t:'Multi-Agent · NOVA',d:'0.5s'},
+                {i:'SP',n:'Soo-Jin Park',r:'Research Scientist',c:'#10b981',bg:'rgba(26,46,26,0.6)',t:'Red-Teaming · Evals',d:'0.6s'},
+                {i:'RV',n:'Rosa Vasquez',r:'ML Infrastructure Lead',c:'#f59e0b',bg:'rgba(42,31,10,0.6)',t:'Training · RLHF',d:'0.7s'},
+                {i:'+',n:'Join the Team',r:'Open Positions',c:'#3b82f6',bg:'rgba(59,130,246,0.04)',t:'View Careers →',d:'0.8s',href:'/careers'},
+              ].map(m => (
+                <a key={m.n} href={m.href || '/careers'} style={{background:m.bg,padding:'2rem 1.5rem',textDecoration:'none',display:'block',backdropFilter:'blur(8px)',transition:'background 0.3s',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(20px)',transitionProperty:'opacity,transform,background',transitionDuration:'0.7s,0.7s,0.3s',transitionDelay:m.d}}
+                  onMouseEnter={e=>e.currentTarget.style.background='rgba(20,28,45,0.8)'}
+                  onMouseLeave={e=>e.currentTarget.style.background=m.bg}>
+                  <div style={{width:'44px',height:'44px',borderRadius:'8px',background:`${m.c}18`,border:`1px solid ${m.c}33`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:m.c,marginBottom:'1rem'}}>{m.i}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',color:'rgba(255,255,255,0.85)',letterSpacing:'0.03em',marginBottom:'0.25rem'}}>{m.n}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:m.c,letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:'0.75rem'}}>{m.r}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.05em'}}>{m.t}</div>
+                </a>
+              ))}
             </div>
-
-            <div className="team-card">
-              <div className="team-avatar" style={{background:'linear-gradient(135deg,#2d1b4e,#1e1a3a)'}}>
-                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#8b5cf6'}}>AK</span>
-              </div>
-              <div className="team-info">
-                <h3 className="team-name">Ananya Krishnaswamy</h3>
-                <div className="team-role" style={{color:'#8b5cf6'}}>Head of Interpretability</div>
-                <p className="team-bio">Pioneering mechanistic analysis of large transformers. Leads our circuit-level audit programs and deceptive alignment probes across the model suite.</p>
-                <div className="team-tags">
-                  <span className="team-tag">Interpretability</span>
-                  <span className="team-tag">Circuits</span>
-                  <span className="team-tag">Transformers</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="team-card">
-              <div className="team-avatar" style={{background:'linear-gradient(135deg,#0a2a35,#0a1e28)'}}>
-                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#06b6d4'}}>DO</span>
-              </div>
-              <div className="team-info">
-                <h3 className="team-name">David Okafor</h3>
-                <div className="team-role" style={{color:'#06b6d4'}}>Lead — Agentic Systems</div>
-                <p className="team-bio">Architect of the NOVA multi-agent coordination framework. Expert in safe autonomy envelopes, agent coordination protocols, and emergent behavior detection.</p>
-                <div className="team-tags">
-                  <span className="team-tag">Agentic AI</span>
-                  <span className="team-tag">NOVA</span>
-                  <span className="team-tag">Safety</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="team-card">
-              <div className="team-avatar" style={{background:'linear-gradient(135deg,#1a2e1a,#0f1f0f)'}}>
-                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#10b981'}}>SP</span>
-              </div>
-              <div className="team-info">
-                <h3 className="team-name">Soo-Jin Park</h3>
-                <div className="team-role" style={{color:'#10b981'}}>Research Scientist — Evaluations</div>
-                <p className="team-bio">Designed the SAFE-AGENT benchmark suite. Runs structured red-teaming programs and builds the evaluation infrastructure used across all model versions.</p>
-                <div className="team-tags">
-                  <span className="team-tag">Evaluations</span>
-                  <span className="team-tag">Red-Teaming</span>
-                  <span className="team-tag">Benchmarks</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="team-card">
-              <div className="team-avatar" style={{background:'linear-gradient(135deg,#2a1f0a,#1f1505)'}}>
-                <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'2rem',color:'#f59e0b'}}>RV</span>
-              </div>
-              <div className="team-info">
-                <h3 className="team-name">Rosa Vasquez</h3>
-                <div className="team-role" style={{color:'#f59e0b'}}>ML Infrastructure Lead</div>
-                <p className="team-bio">Builds and maintains the distributed training infrastructure powering our frontier model research. Expert in large-scale RLHF pipelines and experiment reproducibility.</p>
-                <div className="team-tags">
-                  <span className="team-tag">Infrastructure</span>
-                  <span className="team-tag">Training</span>
-                  <span className="team-tag">RLHF</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="team-card team-card-join">
-              <div className="team-avatar" style={{background:'rgba(59,130,246,0.05)',border:'1px dashed rgba(59,130,246,0.3)'}}>
-                <span style={{fontSize:'2rem'}}>+</span>
-              </div>
-              <div className="team-info">
-                <h3 className="team-name" style={{color:'#6b7a94'}}>You?</h3>
-                <div className="team-role" style={{color:'#3b82f6'}}>Open Positions</div>
-                <p className="team-bio">We are actively hiring research scientists, ML engineers, and interns. If you want to work on the most important problem of our time — apply.</p>
-                <a href="/careers" className="team-cta">View Open Roles →</a>
-              </div>
-            </div>
-
           </div>
-        </div>
-      </section>
+        </>)}
+      </Section>
+
+      {/* ABOUT */}
+      <Section id="about" bg="#000" style={{minHeight:'80vh'}}>
+        {vis => (<>
+          <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse 60% 80% at 50% 50%,rgba(59,130,246,0.04) 0%,rgba(0,0,0,1) 70%)'}} />
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'900px',margin:'0 auto',textAlign:'center'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.7)',marginBottom:'2rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Our Mission</div>
+            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:0.9,color:'#fff',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Intelligence<br/>That Serves<br/>Humanity.</h2>
+            <p style={{fontFamily:"'Lora',serif",fontStyle:'italic',fontSize:'clamp(1rem,1.8vw,1.3rem)',color:'rgba(255,255,255,0.45)',lineHeight:1.9,marginBottom:'4rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}}>
+              Texas AGI Labs is an independent research institution based in McKinney, Texas. We believe the frontier of intelligence research should not be concentrated in a single city or worldview. We publish openly. We build carefully. We move with urgency — because the stakes demand it.
+            </p>
+            <div style={{display:'flex',gap:'4rem',justifyContent:'center',flexWrap:'wrap',opacity:vis?1:0,transition:'all 0.8s ease 0.5s'}}>
+              {[['3','Frontier Models'],['12+','Research Papers'],['5','Safety Researchers'],['100%','Open Research']].map(([n,l]) => (
+                <div key={l}>
+                  <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'3.5rem',background:'linear-gradient(135deg,#3b82f6,#06b6d4)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',lineHeight:1}}>{n}</div>
+                  <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',color:'rgba(255,255,255,0.25)',letterSpacing:'0.12em',textTransform:'uppercase',marginTop:'4px'}}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>)}
+      </Section>
 
       {/* CONTACT */}
-      <section id="contact" className="contact-section">
-        <div className="section-inner">
-          <div className="contact-inner">
-            <div className="section-label" style={{justifyContent:'center'}}>Contact</div>
-            <h2 className="section-title">Join the Mission</h2>
-            <p className="section-body" style={{margin:'0 auto',textAlign:'center'}}>Whether you&apos;re a researcher, engineer, institution, or simply curious about the future of intelligence — we want to hear from you.</p>
-            <form className="contact-form reveal" onSubmit={handleSubmit}>
-              <div className="form-field"><label htmlFor="fname">First Name</label><input type="text" id="fname" name="first_name" placeholder="Ada" /></div>
-              <div className="form-field"><label htmlFor="lname">Last Name</label><input type="text" id="lname" name="last_name" placeholder="Lovelace" /></div>
-              <div className="form-field"><label htmlFor="email">Email Address</label><input type="email" id="email" name="email" placeholder="ada@university.edu" /></div>
-              <div className="form-field">
-                <label htmlFor="role">I Am</label>
-                <select id="role" name="role">
-                  <option value="">Select your background</option>
-                  <option>AI / ML Researcher</option><option>Software Engineer</option>
-                  <option>Academic / Professor</option><option>Industry Professional</option>
-                  <option>Student</option><option>Investor / Partner</option>
-                  <option>Journalist / Press</option><option>Other</option>
-                </select>
+      <Section id="contact" bg="#000" style={{minHeight:'80vh'}}>
+        {vis => (<>
+          <NeuralCanvas color1="#3b82f6" color2="#10b981" density={30} />
+          <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.9)'}} />
+          <div style={{position:'relative',zIndex:2,padding:'0 6vw',width:'100%',maxWidth:'720px',margin:'0 auto'}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.2em',textTransform:'uppercase',color:'rgba(59,130,246,0.8)',marginBottom:'0.75rem',opacity:vis?1:0,transition:'all 0.8s ease 0.1s'}}>Contact</div>
+            <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(3rem,7vw,7rem)',lineHeight:0.9,color:'#fff',marginBottom:'3rem',opacity:vis?1:0,transform:vis?'translateY(0)':'translateY(30px)',transition:'all 0.9s ease 0.2s'}}>Get In<br/>Touch.</h2>
+            <form style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.25rem',opacity:vis?1:0,transition:'all 0.8s ease 0.35s'}} onSubmit={handleSubmit}>
+              {[['First Name','text','first_name'],['Last Name','text','last_name']].map(([label,type,name]) => (
+                <div key={name}>
+                  <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>{label}</label>
+                  <input type={type} name={name} required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'}}
+                    onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
+                    onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
+                </div>
+              ))}
+              <div style={{gridColumn:'1/-1'}}>
+                <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>Email</label>
+                <input type="email" name="email" required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',boxSizing:'border-box',transition:'border-color 0.2s'}}
+                  onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
+                  onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
               </div>
-              <div className="form-field form-full"><label htmlFor="message">Message</label><textarea id="message" name="message" rows={5} placeholder="Tell us about your interest in AGI research, collaboration opportunities, or questions about our work..."></textarea></div>
-              <div className="form-full" style={{textAlign:'center',marginTop:'0.5rem'}}>
-                <button type="submit" className="btn-primary" style={{padding:'16px 48px',fontSize:'13px'}}>Send Message →</button>
+              <div style={{gridColumn:'1/-1'}}>
+                <label style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'block',marginBottom:'8px'}}>Message</label>
+                <textarea name="message" rows={5} required style={{width:'100%',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'4px',padding:'11px 14px',color:'#fff',fontFamily:"'DM Mono',monospace",fontSize:'12px',outline:'none',resize:'vertical',boxSizing:'border-box',transition:'border-color 0.2s'}}
+                  onFocus={e=>e.currentTarget.style.borderColor='rgba(59,130,246,0.5)'}
+                  onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'} />
+              </div>
+              <div style={{gridColumn:'1/-1'}}>
+                <button type="submit" style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.12em',textTransform:'uppercase',background:'#3b82f6',color:'#fff',border:'none',padding:'13px 32px',borderRadius:'4px',cursor:'pointer',transition:'background 0.2s',boxShadow:'0 0 30px rgba(59,130,246,0.25)'}}
+                  onMouseEnter={e=>e.currentTarget.style.background='#2563eb'}
+                  onMouseLeave={e=>e.currentTarget.style.background='#3b82f6'}>Send Message →</button>
               </div>
             </form>
           </div>
-        </div>
-      </section>
+        </>)}
+      </Section>
 
       {/* FOOTER */}
-      <footer>
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <a href="/" className="nav-logo" style={{textDecoration:'none'}}>
-              <img src="/texasagilabs-logo.png" alt="TX" className="logo-img" />
-              <span className="logo-text">Texas AGI Labs</span>
+      <footer style={{background:'#000',borderTop:'1px solid rgba(255,255,255,0.06)',padding:'3rem 6vw'}}>
+        <div style={{maxWidth:'1200px',margin:'0 auto',display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:'3rem',marginBottom:'2.5rem'}}>
+          <div>
+            <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none',marginBottom:'1rem'}}>
+              <img src="/texasagilabs-logo.png" alt="" style={{width:'26px',height:'26px'}} />
+              <span style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.15em',textTransform:'uppercase',color:'#fff'}}>Texas AGI Labs</span>
             </a>
-            <p>An independent frontier AI research lab advancing the science of aligned, interpretable, and beneficial artificial general intelligence.</p>
+            <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.2)',lineHeight:1.8}}>An independent frontier AI research lab.<br/>McKinney, Texas.</p>
           </div>
-          <div className="footer-col"><h4>Research</h4><ul><li><a href="/research">Publications</a></li><li><a href="/blog">Blog</a></li><li><a href="/#research">Research Areas</a></li><li><a href="/#safety">Safety</a></li></ul></div>
-          <div className="footer-col"><h4>Models</h4><ul><li><a href="/models/alpha">ALPHA A1</a></li><li><a href="/models/omega">OMEGA B1</a></li><li><a href="/models/nova">NOVA C1</a></li><li><a href="/#contact">API Access</a></li><li><a href="/#models">Model Cards</a></li></ul></div>
-          <div className="footer-col"><h4>Company</h4><ul><li><a href="/#about">About</a></li><li><a href="/careers">Careers</a></li><li><a href="/#contact">Press</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Use</a></li></ul></div>
+          {[
+            ['Research',[['Publications','/research'],['Blog','/blog'],['Safety','/#safety']]],
+            ['Models',[['ALPHA A1','/models/alpha'],['OMEGA B1','/models/omega'],['NOVA C1','/models/nova']]],
+            ['Company',[['About','/#about'],['Careers','/careers'],['Contact','/#contact']]],
+          ].map(([title, links]) => (
+            <div key={title}>
+              <div style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(255,255,255,0.25)',marginBottom:'1.25rem'}}>{title}</div>
+              <ul style={{listStyle:'none',padding:0,margin:0,display:'flex',flexDirection:'column',gap:'0.7rem'}}>
+                {links.map(([label,href]) => (
+                  <li key={label}><a href={href} style={{fontFamily:"'DM Mono',monospace",fontSize:'11px',color:'rgba(255,255,255,0.4)',textDecoration:'none',transition:'color 0.2s'}}
+                    onMouseEnter={e=>e.currentTarget.style.color='#fff'}
+                    onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.4)'}>{label}</a></li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-        <div className="footer-bottom">
-          <p>© 2025–2026 Texas AGI Labs. All rights reserved. McKinney, TX 75070</p>
-          <div className="footer-badges"><span className="badge">Safety-First</span><span className="badge">Open Research</span><span className="badge">Texas-Built</span></div>
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:'2rem',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'1rem'}}>
+          <p style={{fontFamily:"'DM Mono',monospace",fontSize:'10px',color:'rgba(255,255,255,0.18)',letterSpacing:'0.05em'}}>© 2025–2026 Texas AGI Labs. All rights reserved. McKinney, TX 75070</p>
+          <div style={{display:'flex',gap:'0.75rem'}}>
+            {['Safety-First','Open Research','Texas-Built'].map(b => (
+              <span key={b} style={{fontFamily:"'DM Mono',monospace",fontSize:'9px',letterSpacing:'0.1em',textTransform:'uppercase',padding:'3px 8px',border:'1px solid rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.2)',borderRadius:'3px'}}>{b}</span>
+            ))}
+          </div>
         </div>
       </footer>
 
+      <style jsx global>{`
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: #000; color: #fff; -webkit-font-smoothing: antialiased; }
+        @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+        @media(max-width:1024px) {
+          [style*="grid-template-columns: repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
+          [style*="grid-template-columns: repeat(4,1fr)"] { grid-template-columns: 1fr 1fr !important; }
+          [style*="grid-template-columns: repeat(6,1fr)"] { grid-template-columns: repeat(3,1fr) !important; }
+          [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; gap: 3rem !important; }
+          [style*="grid-template-columns: 2fr 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media(max-width:640px) {
+          nav > div { display: none !important; }
+          [style*="grid-template-columns: repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
+          [style*="grid-template-columns: repeat(6,1fr)"] { grid-template-columns: 1fr 1fr !important; }
+        }
+      `}</style>
     </>
   )
 }
