@@ -333,17 +333,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* CTA — desktop only */}
-            <a href="/#contact" className="nav-desktop" style={{
-              fontFamily:"'DM Mono',monospace",fontSize:'10px',letterSpacing:'0.12em',
-              textTransform:'uppercase',color:'rgba(255,255,255,0.85)',textDecoration:'none',
-              border:'1px solid rgba(255,255,255,0.4)',padding:'7px 15px',borderRadius:'3px',
-              transition:'all .2s',flexShrink:0,
-            }}
-              onMouseEnter={e=>{e.currentTarget.style.color='#fff';e.currentTarget.style.borderColor='rgba(255,255,255,0.9)'}}
-              onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.85)';e.currentTarget.style.borderColor='rgba(255,255,255,0.4)'}}>
-              Request Access
-            </a>
+
 
             {/* Hamburger — mobile only */}
             <button className="nav-mobile" onClick={()=>setMenuOpen(o=>!o)} style={{
@@ -412,12 +402,7 @@ export default function Home() {
             </div>
           </div>
         ))}
-        <a href="/#contact" onClick={()=>setMenuOpen(false)} style={{
-          fontFamily:"'DM Mono',monospace",fontSize:'11px',letterSpacing:'0.14em',
-          textTransform:'uppercase',color:'#000',background:'#fff',
-          padding:'14px 28px',borderRadius:'3px',textDecoration:'none',
-          textAlign:'center',marginTop:'1rem',
-        }}>Request Access →</a>
+
       </div>
 
       {/* ── 1. HERO ── */}
