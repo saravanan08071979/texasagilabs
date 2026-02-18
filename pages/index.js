@@ -51,7 +51,7 @@ export default function Home() {
     btn.textContent = 'Sending...'
     btn.disabled = true
     try {
-      const res = await fetch('https://formspree.io/f/REPLACE_WITH_YOUR_ID', {
+      const res = await fetch('https://formspree.io/f/xkovzbno', {
         method: 'POST',
         body: new FormData(e.target),
         headers: { Accept: 'application/json' },
